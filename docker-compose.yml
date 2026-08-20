@@ -1,0 +1,21 @@
+services:
+  filament-tracker:
+    build: .
+    container_name: filament-tracker
+    restart: unless-stopped
+    ports:
+      - "3001:3001"    # Web UI + API
+      - "1883:1883"    # MQTT relay (optional, enabled in Settings)
+    volumes:
+      - ./data:/app/data
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      DATA_DIR: /app/data
+      JWT_SECRET: "change-this-to-a-random-secret"
+      CORS_ORIGIN: "http://localhost:3001"
+    network_mode: host
+    # Use host networking so the backend can reach Bambu printers on your LAN.
+    # If you prefer bridge networking, remove 'network_mode: host' and add:
+    #   extra_hosts:
+    #     - "host-gateway:host-gateway"

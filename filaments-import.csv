@@ -1,0 +1,62 @@
+name,brand,material,color_hex,color_name,finish,density_g_cm3,price_per_kg_dkk,spool_weight_g,low_stock_threshold_g,nozzle_temp_c,bed_temp_c,location,notes,initial_spools,initial_weight_g,spool_type
+PLA Matte Charcoal,Bambu Lab,PLA,#000000,Charcoal,Matte,1.24,225,1000,150,220,65,,Color : Matte Charcoal (11101),1,650,refill
+PLA CF Jeans Blue,Bambu Lab,PLA,#6E88BC,Jeans Blue,CF,1.24,180,1000,150,220,65,,Color : Jeans Blue (14600),1,750,reusable
+PLA CF Burgundy Red,Bambu Lab,PLA,#951E23,Burgundy Red,CF,1.24,180,1000,150,220,65,,Color : Burgundy Red (14200),1,1000,reusable
+ASA Gray,Bambu Lab,ASA,#8A949E,Gray,,1.07,205,1000,150,260,90,,Color : Gray (45102),1,1000,reusable
+PLA Silk Gold,Bambu Lab,PLA,#F4A925,Gold,Silk,1.24,137,1000,150,220,65,,Color : Gold (13405),1,870,reusable
+PLA High Temperature Gradient Ice,Polymaker,PLA,#95C5D3,Gradient Ice,High Temperature,1.24,198,1000,150,220,65,,SKU: PA17013,1,793,non-reusable
+PLA Wood Black Walnut,Bambu Lab,PLA,#4F3F24,Black Walnut,Wood,1.24,298,1000,150,220,65,,Color : Black Walnut (13107),1,450,reusable
+PLA Matte Army Blue,Polymaker,PLA,#2e4462,Army Blue,Matte,1.24,158,1000,150,220,65,,SKU: CA04008,1,1000,non-reusable
+PLA Wood White Oak,Bambu Lab,PLA,#D6CCA3,White Oak,Wood,1.24,225,1000,150,220,65,,Color : White Oak (13106),1,724,reusable
+PLA Matte Charcoal Black,Polymaker,PLA,#2f2e30,Charcoal Black,Matte,1.24,158,1000,150,220,65,,SKU: CA04015,1,1000,non-reusable
+PLA Matte Charcoal Black,Polymaker,PLA,#2f2e30,Charcoal Black,Matte,1.24,158,1000,150,220,65,,SKU: CA04015,1,49,non-reusable
+PLA Silk Silver,Bambu Lab,PLA,#C8C8C8,Silver,Silk,1.24,120,1000,150,220,65,,Color : Silver (13109),1,1000,reusable
+PLA CF Matcha Green,Bambu Lab,PLA,#5C9748,Matcha Green,CF,1.24,180,1000,150,220,65,,Color : Matcha Green (14500),1,50,reusable
+PLA Bright Green,Bambu Lab,PLA,#BECF00,Bright Green,,1.24,114,1000,150,220,65,,Color : Bright Green (10503),1,918,reusable
+PLA Glow Green,Bambu Lab,PLA,#A1FFAC,Glow Green,Glow,1.24,225,1000,150,220,65,,Color : Glow Green (15500),1,816,reusable
+PLA Sunflower Yellow,Bambu Lab,PLA,#FEC600,Sunflower Yellow,,1.24,115,1000,150,220,65,,Color : Sunflower Yellow (10402),1,609,reusable
+PLA Gradient Cotton Candy Cloud,Bambu Lab,PLA,#8EC9E9,Cotton Candy Cloud,Gradient,1.24,225,1000,150,220,65,,Color : Cotton Candy Cloud (10907),1,504,reusable
+PLA Matte Sky Blue,Polymaker,PLA,#1AC5FC,Sky Blue,Matte,1.24,158,1000,150,220,65,,SKU: CA04001,1,844,reusable
+PLA Matte Arctic Teal,Polymaker,PLA,#61bcc3,Arctic Teal,Matte,1.24,158,1000,150,220,65,,SKU: CA04006,1,1000,non-reusable
+PETG White,Bambu Lab,PETG,#FFFFFF,White,,1.27,225,1000,150,240,70,,Color : White (33100),1,1000,reusable
+PLA Translucent Blue,Bambu Lab,PLA,#0047BB,Translucent Blue,Translucent,1.24,149,1000,150,220,65,,Color : Blue (13611),1,1000,reusable
+PLA Bambu Green,Bambu Lab,PLA,#00AE42,Bambu Green,,1.24,120,1000,150,220,65,,Color : Bambu Green (10501),1,990,reusable
+PLA Matte Ash Gray,Bambu Lab,PLA,#9b9ea0,Ash Gray,Matte,1.24,90,1000,150,220,65,,Color : Matte Ash Gray (11102),1,1000,refill
+PLA Matte Ash Gray,Bambu Lab,PLA,#9b9ea0,Ash Gray,Matte,1.24,137,1000,150,220,65,,Color : Matte Ash Gray (11102),1,374,reusable
+PLA Matte Ash Gray,Bambu Lab,PLA,#9b9ea0,Ash Gray,Matte,1.24,103,1000,150,220,65,,Color : Matte Ash Gray (11102),1,1000,reusable
+PLA Matte Ash Gray,Bambu Lab,PLA,#9b9ea0,Ash Gray,Matte,1.24,103,1000,150,220,65,,Color : Matte Ash Gray (11102),1,1000,reusable
+PLA Pumpkin Orange,Bambu Lab,PLA,#FF9016,Pumpkin Orange,,1.24,115,1000,150,220,65,,Color : Pumpkin Orange (10301),1,907,reusable
+PLA White Marble,Bambu Lab,PLA,#F7F3F0,White Marble,Marble,1.24,225,1000,150,220,65,,Color : White Marble (13103),1,206,reusable
+PETG Black,Polymaker,PETG,#070908,Black,,1.27,142,1000,150,240,70,,SKU: PB05001,1,660,reusable
+PETG Black,Polymaker,PETG,#070908,Black,,1.27,142,1000,150,240,70,,SKU: PB05001,1,1000,non-reusable
+PLA Matte Bone White,Bambu Lab,PLA,#cbc6b8,Bone White,Matte,1.24,149,1000,150,220,65,,Color : Matte Bone White (11103),1,1000,refill
+PLA Matte Bone White,Bambu Lab,PLA,#cbc6b8,Bone White,Matte,1.24,90,1000,150,220,65,,Color : Matte Bone White (11103),1,1000,refill
+PLA Silk White,Bambu Lab,PLA,#ffffff,White,Silk,1.24,149,1000,150,220,65,,Color : White (13110),1,1000,refill
+PLA Matte Nardo Gray,Bambu Lab,PLA,#757575,Nardo Gray,Matte,1.24,90,1000,150,220,65,,Color : Matte Nardo Gray (11104),1,1000,refill
+PLA Red,Bambu Lab,PLA,#C12e1f,Red,,1.24,90,1000,150,220,65,,Color : Red (10200),1,1000,refill
+PLA Matte Dark Red,Bambu Lab,PLA,#bb3d43,Dark Red,Matte,1.24,90,1000,150,220,65,,Color : Matte Dark Red (11202),1,885,refill
+PLA Matte Dark Green,Bambu Lab,PLA,#68724d,Dark Green,Matte,1.24,90,1000,150,220,65,,Color : Matte Dark Green (11501),1,1000,refill
+PLA Matte Dark Green,Bambu Lab,PLA,#68724d,Dark Green,Matte,1.24,90,1000,150,220,65,,Color : Matte Dark Green (11501),1,1000,refill
+PLA Matte Plum,Bambu Lab,PLA,#950051,Plum,Matte,1.24,90,1000,150,220,65,,Color : Matte Plum (11204),1,1000,refill
+PLA Matte Plum,Bambu Lab,PLA,#950051,Plum,Matte,1.24,114,1000,150,220,65,,Color : Matte Plum (11204),1,145,reusable
+PLA Matte Plum,Bambu Lab,PLA,#950051,Plum,Matte,1.24,90,1000,150,220,65,,Color : Matte Plum (11204),1,1000,refill
+PLA Matte Desert Tan,Bambu Lab,PLA,#e8dbb7,Desert Tan,Matte,1.24,90,1000,150,220,65,,Color : Matte Desert Tan (11401),1,195,reusable
+PLA Matte Desert Tan,Bambu Lab,PLA,#e8dbb7,Desert Tan,Matte,1.24,90,1000,150,220,65,,Color : Matte Desert Tan (11401),1,1000,refill
+PLA Matte Dark Blue,Bambu Lab,PLA,#042f56,Dark Blue,Matte,1.24,90,1000,150,220,65,,Color : Matte Dark Blue (11602),1,1000,refill
+PLA Matte Marine Blue,Bambu Lab,PLA,#0078bf,Marine Blue,Matte,1.24,90,1000,150,220,65,,Color : Matte Marine Blue (11600),1,858,refill
+PLA Matte Marine Blue,Bambu Lab,PLA,#0078bf,Marine Blue,Matte,1.24,90,1000,150,220,65,,Color : Matte Marine Blue (11600),1,1000,refill
+PLA Matte Marine Blue,Bambu Lab,PLA,#0078bf,Marine Blue,Matte,1.24,90,1000,150,220,65,,Color : Matte Marine Blue (11600),1,1000,reusable
+PLA Matte Lilac Purple,Bambu Lab,PLA,#AE96D4,Lilac Purple,Matte,1.24,90,1000,150,220,65,,Color : Matte Lilac purple (11700),1,994,refill
+PLA Matte Ivory White,Bambu Lab,PLA,#FFFFFF,Ivory White,Matte,1.24,142,1000,150,220,65,,Color : Matte Ivory White (11100),1,225,reusable
+PLA Matte Ivory White,Bambu Lab,PLA,#FFFFFF,Ivory White,Matte,1.24,105,1000,150,220,65,,Color : Matte Ivory White (11100),1,1000,reusable
+PLA Matte Sky Blue,Bambu Lab,PLA,#56B7E6,Sky Blue,Matte,1.24,149,1000,150,220,65,,Color : Matte Sky Blue (11603),1,1000,refill
+PLA Gradient Rainbow 03,SUNLU,PLA,#b13bdb,Rainbow 03,Gradient,1.24,,250,150,220,65,,,1,150,non-reusable
+PLA Gradient Rainbow 02,SUNLU,PLA,#db5b3b,Rainbow 02,Gradient,1.24,,250,150,220,65,,,1,250,non-reusable
+PLA Gradient Rainbow 01,SUNLU,PLA,#dba63b,Rainbow 01,Gradient,1.24,,250,150,220,65,,,1,250,non-reusable
+PETG Basic White,Bambu Lab,PETG,#FFFFFF,White,Basic,1.27,91,1000,150,240,70,,30106,1,305,refill
+PETG Basic White,Bambu Lab,PETG,#FFFFFF,White,Basic,1.27,,1000,150,240,70,,30106,1,1000,refill
+PETG Basic White,Bambu Lab,PETG,#FFFFFF,White,Basic,1.27,,1000,150,240,70,,30106,1,1000,refill
+PLA Matte Scarlet Red,Bambu Lab,PLA,#DE4343,Scarlet Red,Matte,1.24,91,1000,150,220,65,,11200,1,1000,refill
+PLA Matte Scarlet Red,Bambu Lab,PLA,#DE4343,Scarlet Red,Matte,1.24,91,1000,150,220,65,,11200,1,1000,refill
+PLA Matte Mandarin Orange,Bambu Lab,PLA,#F99963,Mandarin Orange,Matte,1.24,91,1000,150,220,65,,11300,1,1000,refill
+PLA Matte Lemon Yellow,Bambu Lab,PLA,#F7D959,Lemon Yellow,Matte,1.24,91,1000,150,220,65,,11400,1,1000,refill
