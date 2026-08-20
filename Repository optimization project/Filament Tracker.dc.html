@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<style>
+  body{margin:0;background:#0b1220;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+  *{box-sizing:border-box}
+  input,select,button{font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:rgba(124,58,237,.6)!important;box-shadow:0 0 0 3px rgba(124,58,237,.2)}
+  ::placeholder{color:rgba(230,237,247,.35)}
+  input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]{-moz-appearance:textfield}
+  a{color:#93c5fd}a:hover{color:#bfdbfe}
+  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh;color:#e6edf7;display:grid;grid-template-columns:236px minmax(0,1fr);gap:16px;padding:16px;background:radial-gradient(1200px 620px at 28% -12%,rgba(59,130,246,.16),transparent 60%),radial-gradient(920px 520px at 92% 8%,rgba(16,185,129,.09),transparent 55%),radial-gradient(700px 700px at 60% 120%,rgba(124,58,237,.10),transparent 60%),#0b1220">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div style="align-self:start;position:sticky;top:16px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));padding:20px 12px 14px;box-shadow:0 18px 50px rgba(0,0,0,.4)">
+    <div style="font-weight:900;font-size:19px;text-align:center;letter-spacing:.08em;text-transform:uppercase;line-height:1.05;margin-bottom:6px;background:linear-gradient(180deg,#7dd3fc 0%,#60a5fa 45%,#c084fc 70%,#ec4899 100%);-webkit-background-clip:text;background-clip:text;color:transparent">Filament<br>Tracker</div>
+    <div style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.3px;color:rgba(230,237,247,.4);margin-bottom:16px">v2.0 · 2 printers online</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="7">
+        <div onClick="{{ n.go }}" style="display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;user-select:none;border:1px solid {{ n.bd }};background:{{ n.bg }};color:{{ n.fg }};box-shadow:{{ n.glow }}">
+          <span style="width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;background:{{ n.icbg }};color:#fff;flex:none" data-html="{{ n.icon }}"></span>{{ n.label }}
+        </div>
+      </sc-for>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:8px 4px"></div>
+      <sc-for list="{{ navFoot }}" as="n" hint-placeholder-count="2">
+        <div onClick="{{ n.go }}" style="display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;user-select:none;border:1px solid {{ n.bd }};background:{{ n.bg }};color:{{ n.fg }};box-shadow:{{ n.glow }}">
+          <span style="width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;background:{{ n.icbg }};color:#fff;flex:none" data-html="{{ n.icon }}"></span>{{ n.label }}
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <div style="min-width:0">
+
+    <!-- ---------- INVENTORY ---------- -->
+    <sc-if value="{{ isInventory }}" hint-placeholder-val="{{ true }}">
+    <div style="animation:fadeIn .35s ease">
+      <!-- hero live tracker -->
+      <div style="border:1px solid rgba(99,102,241,.28);border-radius:18px;background:linear-gradient(135deg,rgba(79,70,229,.14),rgba(124,58,237,.06)),rgba(255,255,255,.02);padding:16px 18px;margin-bottom:14px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;box-shadow:0 12px 34px rgba(30,20,80,.28)">
+        <div style="width:104px;height:104px;border-radius:50%;background:conic-gradient(#7c3aed 0%,#3b82f6 47%,rgba(255,255,255,.07) 47%);display:flex;align-items:center;justify-content:center;box-shadow:0 0 26px rgba(99,102,241,.35)">
+          <div style="width:80px;height:80px;border-radius:50%;background:#0b1220;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:26px;font-weight:900;line-height:1">47%</span><span style="font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:rgba(230,237,247,.5);margin-top:2px">Printing</span></div>
+        </div>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:3px"><span style="width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;flex:none" data-html="{{ icPrinter }}"></span><span style="font-weight:900;font-size:16px">X1 Carbon</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;letter-spacing:.3px;text-transform:uppercase;color:rgb(52,211,153);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.28);padding:3px 9px;border-radius:999px"><span style="width:7px;height:7px;border-radius:50%;background:rgb(52,211,153);box-shadow:0 0 8px rgba(52,211,153,.6);animation:pulse 2s infinite"></span>Connected</span></div>
+          <div style="font-size:13px;color:rgba(230,237,247,.62);font-weight:700;margin-bottom:12px">benchy_v3.3mf · Layer 142 / 300</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <div style="padding:9px 12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Remaining</div><div style="font-weight:900;font-size:15px;margin-top:3px">1h 12m</div></div>
+            <div style="padding:9px 12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">ETA</div><div style="font-weight:900;font-size:15px;margin-top:3px">18:42</div></div>
+            <div style="padding:9px 12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Layer</div><div style="font-weight:900;font-size:15px;margin-top:3px">142 / 300</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="min-width:118px;padding:10px 13px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);box-shadow:0 6px 16px rgba(79,70,229,.35)"><div style="font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.8)">Nozzle</div><div style="font-size:18px;font-weight:900;color:#fff;margin-top:2px">220°</div></div>
+          <div style="min-width:118px;padding:10px 13px;border-radius:12px;background:linear-gradient(135deg,#10b981,#06b6d4);box-shadow:0 6px 16px rgba(6,182,212,.3)"><div style="font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:rgba(255,255,255,.85)">Bed</div><div style="font-size:18px;font-weight:900;color:#fff;margin-top:2px">60°</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div><h1 style="margin:0;font-size:24px">Inventory</h1><div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-top:4px;font-weight:600">14 filaments · 16 spools</div></div>
+        <div style="flex:1"></div>
+        <div style="display:flex;gap:9px;align-items:stretch">
+          <div style="border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.03);padding:9px 15px;text-align:center"><div style="font-size:11px;color:rgba(230,237,247,.55);font-weight:700">Value</div><div style="font-size:18px;font-weight:900;color:#93c5fd;margin-top:2px">3.140 kr</div></div>
+          <div style="border:1px solid rgba(245,158,11,.28);border-radius:14px;background:rgba(245,158,11,.1);padding:9px 15px;text-align:center"><div style="font-size:11px;color:rgba(255,225,170,.8);font-weight:700">Restock</div><div style="font-size:18px;font-weight:900;color:#f59e0b;margin-top:2px">5</div></div>
+          <button onClick="{{ goAdd }}" style="border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:0 18px;border-radius:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px" data-html="{{ addBtnInner }}"></button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+        <div style="position:relative;flex:1;min-width:240px"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(230,237,247,.4)" data-html="{{ icSearch }}"></span><input placeholder="Search brand, colour, type…" style="width:100%;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px 11px 36px;border-radius:12px" /></div>
+        <div style="display:flex;gap:4px;padding:4px;border-radius:12px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.02)">
+          <sc-for list="{{ invFilters }}" as="c" hint-placeholder-count="4"><span style="padding:7px 12px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</span></sc-for>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:14px">
+        <sc-for list="{{ filaments }}" as="f" hint-placeholder-count="14">
+          <div onClick="{{ f.open }}" style="border:1px solid rgba(255,255,255,.09);background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.28)" style-hover="transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.4)">
+            <div style="height:88px;position:relative;background:{{ f.hex }}">
+              <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.5),transparent 62%)"></div>
+              <span style="position:absolute;top:10px;left:10px;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.35);color:rgba(255,255,255,.92);backdrop-filter:blur(4px)">{{ f.brand }}</span>
+              <span style="position:absolute;top:9px;right:10px;display:flex;align-items:center;gap:5px;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.4);color:#fff;backdrop-filter:blur(4px)"><span style="width:7px;height:7px;border-radius:50%;background:{{ f.dot }}"></span>{{ f.badge }}</span>
+              <div style="position:absolute;bottom:9px;left:12px;right:12px;font-weight:900;font-size:17px;color:#fff;text-shadow:{{ f.nameShadow }}">{{ f.name }}</div>
+            </div>
+            <div style="padding:12px 14px 14px">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+                <span style="font-size:10.5px;font-weight:900;padding:3px 9px;border-radius:999px;border:1px solid {{ f.typeBorder }};background:{{ f.typeBg }};color:{{ f.typeColor }}">{{ f.type }}</span>
+                <span style="font-size:10.5px;font-weight:900;padding:3px 9px;border-radius:999px;border:1px solid rgba(148,163,184,.32);background:rgba(148,163,184,.1);color:#9aa8bd">{{ f.finish }}</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-weight:900;font-size:19px">{{ f.pctStr }}</span><span style="font-size:11px;font-weight:700;color:rgba(230,237,247,.5)">{{ f.remainStr }} left</span></div>
+              <div style="height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ f.barBg }};width:{{ f.pctStr }}"></div></div>
+              <div style="margin-top:11px;display:flex;justify-content:space-between;align-items:center">
+                <span style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:rgba(230,237,247,.55)" data-loc="{{ f.loc }}"><span data-html="{{ icPin }}"></span>{{ f.loc }}</span>
+                <span style="font-size:11px;font-weight:800;color:rgba(147,197,253,.85);background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.22);padding:3px 8px;border-radius:999px">{{ f.daysStr }}</span>
+              </div>
+              <sc-if value="{{ f.hasMulti }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800">
+                  <span style="color:rgba(230,237,247,.5)">{{ f.spoolCount }} spools</span>
+                  <span style="color:#c4b5fd">⌀ {{ f.avgPriceStr }}/spool</span>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- filament detail modal -->
+      <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeModal }}" style="position:fixed;inset:0;z-index:60;background:rgba(4,8,18,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px">
+          <div onClick="{{ stopProp }}" style="width:440px;max-width:100%;border:1px solid rgba(255,255,255,.12);border-radius:22px;overflow:hidden;background:#0e1626;box-shadow:0 40px 120px rgba(0,0,0,.6);animation:fadeIn .2s ease">
+            <div style="height:96px;position:relative;background:{{ mF.hex }}">
+              <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent 60%)"></div>
+              <span style="position:absolute;top:12px;left:14px;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.4);color:#fff;backdrop-filter:blur(4px)">{{ mF.brand }}</span>
+              <button onClick="{{ closeModal }}" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:9px;border:none;background:rgba(0,0,0,.4);color:#fff;font-weight:900;cursor:pointer;backdrop-filter:blur(4px)">✕</button>
+              <div style="position:absolute;bottom:10px;left:16px;right:16px;font-weight:900;font-size:20px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)">{{ mF.name }}</div>
+            </div>
+            <div style="padding:18px 20px 20px">
+              <div style="display:flex;gap:6px;align-items:center;margin-bottom:16px">
+                <span style="font-size:10.5px;font-weight:900;padding:3px 9px;border-radius:999px;border:1px solid {{ mF.typeBorder }};background:{{ mF.typeBg }};color:{{ mF.typeColor }}">{{ mF.type }}</span>
+                <span style="font-size:10.5px;font-weight:900;padding:3px 9px;border-radius:999px;border:1px solid rgba(148,163,184,.32);background:rgba(148,163,184,.1);color:#9aa8bd">{{ mF.finish }}</span>
+                <div style="flex:1"></div>
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:{{ mF.statusColor }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ mF.dot }}"></span>{{ mF.badge }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+                <div style="padding:12px 8px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);text-align:center"><div style="font-size:10px;font-weight:800;color:rgba(230,237,247,.5);text-transform:uppercase;letter-spacing:.3px">Spools</div><div style="font-size:22px;font-weight:900;margin-top:3px">{{ mF.spoolCount }}</div></div>
+                <div style="padding:12px 8px;border-radius:13px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.28);text-align:center"><div style="font-size:10px;font-weight:800;color:rgba(199,190,255,.7);text-transform:uppercase;letter-spacing:.3px">Avg / spool</div><div style="font-size:22px;font-weight:900;margin-top:3px;color:#c4b5fd">{{ mF.avgPriceStr }}</div></div>
+                <div style="padding:12px 8px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);text-align:center"><div style="font-size:10px;font-weight:800;color:rgba(230,237,247,.5);text-transform:uppercase;letter-spacing:.3px">Est. value</div><div style="font-size:22px;font-weight:900;margin-top:3px;color:#93c5fd">{{ mF.estValueStr }}</div></div>
+              </div>
+              <div style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5);margin-bottom:10px">Spools · {{ mF.loc }}</div>
+              <div style="display:flex;flex-direction:column;gap:8px;max-height:184px;overflow:auto">
+                <sc-for list="{{ mF.purchases }}" as="sp" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)">
+                    <span style="width:26px;height:26px;border-radius:8px;flex:none;background:{{ mF.hex }};border:1px solid rgba(255,255,255,.18)"></span>
+                    <div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13px">{{ sp.label }}</div><div style="font-size:11px;font-weight:700;color:rgba(230,237,247,.5)">{{ sp.spoolRemainStr }} left</div></div>
+                    <span style="font-size:10px;font-weight:900;letter-spacing:.3px;text-transform:uppercase;color:{{ sp.typeColor }};background:{{ sp.typeBg }};padding:3px 8px;border-radius:999px">{{ sp.typeLabel }}</span>
+                    <span style="font-size:12px;font-weight:700;color:rgba(230,237,247,.6);min-width:56px;text-align:right">{{ sp.priceStr }}</span>
+                    <button onClick="{{ sp.deleteSpool }}" title="Delete spool" style="border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.1);color:#f87171;width:26px;height:26px;border-radius:8px;cursor:pointer;font-weight:900;font-size:11px;flex:none;padding:0">✕</button>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:16px;padding:13px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08)">
+                <div style="font-size:10.5px;font-weight:900;letter-spacing:.3px;text-transform:uppercase;color:rgba(230,237,247,.45);margin-bottom:9px">Register usage</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="display:flex;align-items:center;gap:2px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);border-radius:10px;padding:0 10px;width:100px"><input value="{{ useGrams }}" onInput="{{ onUseGrams }}" type="number" placeholder="0" style="border:none;background:none;color:#e6edf7;padding:10px 0;width:100%;font-size:13px;font-weight:800" /><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.45)">g</span></div>
+                  <button onClick="{{ mF.logUse }}" style="flex:1;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#e6edf7;padding:10px;border-radius:10px;font-weight:800;cursor:pointer">Log used filament</button>
+                </div>
+                <div style="height:1px;background:rgba(255,255,255,.07);margin:13px 0"></div>
+                <div style="font-size:10.5px;font-weight:900;letter-spacing:.3px;text-transform:uppercase;color:rgba(230,237,247,.45);margin-bottom:9px">Add a spool</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="display:flex;align-items:center;gap:2px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);border-radius:10px;padding:0 10px;width:82px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.45)">kr</span><input value="{{ newSpoolPrice }}" onInput="{{ onSpoolPrice }}" type="number" style="border:none;background:none;color:#e6edf7;padding:10px 0 10px 5px;width:100%;font-size:13px;font-weight:800" /></div>
+                  <select value="{{ newSpoolType }}" onChange="{{ onNewSpoolType }}" style="border:1px solid rgba(255,255,255,.12);background:#101a2c;color:#e6edf7;padding:10px;border-radius:10px;font-size:12.5px;font-weight:700;flex:1;min-width:0"><sc-for list="{{ spoolTypes }}" as="t" hint-placeholder-count="3"><option value="{{ t.id }}">{{ t.label }}</option></sc-for></select>
+                  <button onClick="{{ mF.addSpool }}" style="border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;white-space:nowrap">+ Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ---------- ADD FILAMENT ---------- -->
+    <sc-if value="{{ isAdd }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:fadeIn .35s ease;max-width:920px">
+      <h1 style="margin:0 0 4px;font-size:24px">Add Filament</h1>
+      <div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-bottom:18px;font-weight:600">Register a new spool into your inventory.</div>
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+        <!-- form -->
+        <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:22px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Brand</span><select value="{{ newBrand }}" onChange="{{ onNewBrand }}" style="border:1px solid rgba(255,255,255,.1);background:#101a2c;color:#e6edf7;padding:11px 12px;border-radius:11px"><sc-for list="{{ brands }}" as="b" hint-placeholder-count="6"><option value="{{ b }}">{{ b }}</option></sc-for></select></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Colour name</span><input value="{{ newColorName }}" onInput="{{ onNewColorName }}" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Material</span><select style="border:1px solid rgba(255,255,255,.1);background:#101a2c;color:#e6edf7;padding:11px 12px;border-radius:11px"><option>PLA</option><option>PETG</option><option>ABS</option><option>ASA</option><option>TPU</option></select></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Finish</span><select style="border:1px solid rgba(255,255,255,.1);background:#101a2c;color:#e6edf7;padding:11px 12px;border-radius:11px"><option>Basic</option><option>Matte</option><option>Silk</option><option>Galaxy</option><option>Glossy</option></select></label>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,.07);margin:20px 0"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Spool weight (g)</span><input value="1000" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Price (kr)</span><input value="199" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)"># of spools</span><input value="2" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Spool type</span><select value="{{ newFilType }}" onChange="{{ onNewFilType }}" style="border:1px solid rgba(255,255,255,.1);background:#101a2c;color:#e6edf7;padding:11px 12px;border-radius:11px"><sc-for list="{{ spoolTypes }}" as="t" hint-placeholder-count="3"><option value="{{ t.id }}">{{ t.label }}</option></sc-for></select></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Location</span><input value="Shelf A" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Low-stock alert (g)</span><input value="150" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px"><span style="font-size:12px;font-weight:800;color:rgba(230,237,247,.72)">Nozzle temp (°C)</span><input value="220" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" /></label>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:24px">
+            <button onClick="{{ goInventory }}" style="border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:12px 20px;border-radius:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px" data-html="{{ saveBtnInner }}"></button>
+            <button onClick="{{ goInventory }}" style="border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:#e6edf7;padding:12px 20px;border-radius:12px;font-weight:800;cursor:pointer">Cancel</button>
+          </div>
+        </div>
+        <!-- swatch preview -->
+        <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+          <div style="height:120px;position:relative;background:{{ newHexSafe }}">
+            <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.5),transparent 62%)"></div>
+            <span style="position:absolute;top:12px;left:12px;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.35);color:#fff;backdrop-filter:blur(4px)">{{ newBrand }}</span>
+            <div style="position:absolute;bottom:11px;left:14px;right:14px;font-weight:900;font-size:19px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)">{{ newColorName }}</div>
+          </div>
+          <div style="padding:16px">
+            <div style="font-size:12px;font-weight:800;color:rgba(230,237,247,.6);margin-bottom:10px">Swatch colour</div>
+            <div style="display:flex;gap:9px;align-items:center">
+              <input type="color" value="{{ newHexSafe }}" onInput="{{ onNewHex }}" style="width:46px;height:46px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:none;padding:3px;cursor:pointer" />
+              <input value="{{ newHex }}" onInput="{{ onNewHex }}" maxlength="7" placeholder="#RRGGBB" style="flex:1;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px;font-family:ui-monospace,monospace;text-transform:uppercase" />
+            </div>
+            <div style="margin-top:14px;padding:12px;border-radius:12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);font-size:12px;line-height:1.5;color:rgba(191,219,254,.9)">Preview updates live as you type. Colour drives the tile header and status bar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- SPOOLS ---------- -->
+    <sc-if value="{{ isSpools }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:fadeIn .35s ease">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div><h1 style="margin:0;font-size:24px">Spools</h1><div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-top:4px;font-weight:600">{{ physicalCount }} physical spools · tracked by colour &amp; type</div></div>
+        <div style="flex:1"></div>
+        <button onClick="{{ goAdd }}" style="border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px" data-html="{{ addBtnInner }}"></button>
+      </div>
+
+      <div style="border:1px solid rgba(255,255,255,.09);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));padding:14px 16px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="font-size:34px;font-weight:900;color:#34d399;line-height:1;min-width:40px;text-align:center">{{ emptyReusableCount }}</div>
+          <div><div style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5)">Empty reusable spools</div><div style="font-size:12.5px;font-weight:600;color:rgba(230,237,247,.45);margin-top:3px">available for a new refill</div></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(255,255,255,.09);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+        <div style="display:grid;grid-template-columns:2.2fr 1.1fr 1.6fr .8fr .9fr;gap:12px;padding:13px 18px;font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5);border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)">
+          <span>Colour</span><span>Spool type</span><span>Remaining</span><span style="text-align:right">Price</span><span style="text-align:right">Location</span>
+        </div>
+        <sc-for list="{{ flatSpools }}" as="s" hint-placeholder-count="16">
+          <div style="display:grid;grid-template-columns:2.2fr 1.1fr 1.6fr .8fr .9fr;gap:12px;padding:13px 18px;align-items:center;border-bottom:1px solid rgba(255,255,255,.05)" style-hover="background:rgba(255,255,255,.03)">
+            <div style="display:flex;align-items:center;gap:11px;min-width:0"><span style="width:30px;height:30px;border-radius:9px;flex:none;background:{{ s.hex }};border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 3px rgba(0,0,0,.3)"></span><div style="min-width:0"><div style="font-weight:800;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.name }}</div><div style="font-size:11px;color:rgba(230,237,247,.5);font-weight:700">{{ s.brand }} · {{ s.matType }}</div></div></div>
+            <span><span style="font-size:10px;font-weight:900;letter-spacing:.3px;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:{{ s.spoolTypeColor }};background:{{ s.spoolTypeBg }}">{{ s.spoolTypeLabel }}</span></span>
+            <div><div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:800;margin-bottom:4px"><span>{{ s.remainStr }}</span><span style="color:rgba(230,237,247,.45)">{{ s.pctStr }}</span></div><div style="height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ s.barBg }};width:{{ s.pctStr }}"></div></div></div>
+            <span style="text-align:right;font-size:12px;font-weight:700;color:rgba(230,237,247,.7)">{{ s.priceStr }}</span>
+            <span style="text-align:right;font-size:12px;font-weight:700;color:rgba(230,237,247,.7)">{{ s.loc }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- CALCULATOR ---------- -->
+    <sc-if value="{{ isCalc }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:fadeIn .35s ease;max-width:1180px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><h1 style="margin:0;font-size:24px">Cost Calculator</h1><span style="font-size:12px;font-weight:700;color:rgba(230,237,247,.5)">workshop pricing · DKK</span></div>
+      <div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-bottom:18px;font-weight:600">Full cost model — material, machine depreciation, energy, labor, margin &amp; VAT.</div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.4fr) 380px;gap:16px;align-items:start">
+
+        <!-- ===== LEFT: inputs ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+
+          <!-- Part & batch -->
+          <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:20px 22px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+            <div style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5);margin:0 0 14px">Part</div>
+            <div style="margin-bottom:14px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11.5px;font-weight:800;color:rgba(230,237,247,.7)">Part name</span><input value="{{ cPartName }}" onInput="{{ onPartName }}" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;padding:11px 13px;border-radius:12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)">
+              <span style="font-size:12px;font-weight:800;color:rgba(191,219,254,.9);flex:1">Import G-code / 3MF to auto-fill time &amp; weight</span>
+              <button style="border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#e6edf7;padding:8px 14px;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer">Choose file</button>
+            </div>
+          </div>
+
+          <!-- Printer profile -->
+          <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:20px 22px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+            <div style="display:flex;align-items:center;gap:10px;margin:0 0 14px"><span style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5)">Printer profile</span><div style="flex:1"></div>
+              <select value="{{ cProfile }}" onChange="{{ onProfile }}" style="border:1px solid rgba(255,255,255,.1);background:#101a2c;color:#e6edf7;padding:8px 11px;border-radius:10px;font-size:13px;font-weight:700;min-width:170px">
+                <sc-for list="{{ profileOptions }}" as="p" hint-placeholder-count="8"><option value="{{ p }}">{{ p }}</option></sc-for>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Printer price</span><input value="{{ cPrinterPrice }}" onInput="{{ onPrinterPrice }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Lifetime (yrs)</span><input value="{{ cLifetime }}" onInput="{{ onLifetime }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Uptime (%)</span><input value="{{ cUptime }}" onInput="{{ onUptime }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Maint. / yr</span><input value="{{ cMaint }}" onInput="{{ onMaint }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Power (W)</span><input value="{{ cPower }}" onInput="{{ onPower }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">El. (kr/kWh)</span><input value="{{ cElec }}" onInput="{{ onElec }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Material factor</span><input value="{{ cMatFactor }}" onInput="{{ onMatFactor }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Buffer factor</span><input value="{{ cBuffer }}" onInput="{{ onBuffer }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 11px;border-radius:10px;font-size:13px;width:100%" /></label>
+            </div>
+          </div>
+
+          <!-- Materials -->
+          <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:20px 22px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+            <div style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5)">Materials</span><div style="flex:1"></div><button onClick="{{ addMaterial }}" style="border:1px solid rgba(124,58,237,.4);background:rgba(124,58,237,.16);color:#c4b5fd;padding:6px 12px;border-radius:9px;font-weight:800;font-size:12px;cursor:pointer">+ Add material</button></div>
+            <div style="display:grid;grid-template-columns:1.7fr .9fr .9fr 32px;gap:8px;font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:rgba(230,237,247,.42);margin-bottom:8px;padding:0 2px"><span>Filament</span><span>Price / kg</span><span>Weight (g)</span><span></span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ materialsView }}" as="m" hint-placeholder-count="1">
+                <div style="display:grid;grid-template-columns:1.7fr .9fr .9fr 32px;gap:8px;align-items:center">
+                  <select value="{{ m.filamentId }}" onChange="{{ m.onSelect }}" style="border:1px solid rgba(255,255,255,.1);background:#101a2c;color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:12.5px;width:100%">
+                    <sc-for list="{{ filamentOptions }}" as="o" hint-placeholder-count="5"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                  </select>
+                  <input value="{{ m.pricePerKg }}" onInput="{{ m.onPrice }}" disabled="{{ m.priceLocked }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:{{ m.priceBg }};color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:12.5px;width:100%;opacity:{{ m.priceOpacity }}" />
+                  <input value="{{ m.weightGrams }}" onInput="{{ m.onWeight }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:12.5px;width:100%" />
+                  <button onClick="{{ m.onRemove }}" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:rgba(230,237,247,.6);border-radius:9px;height:34px;cursor:pointer;font-weight:900">✕</button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="height:1px;background:rgba(255,255,255,.07);margin:18px 0"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+              <div><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62);display:block;margin-bottom:6px">Print time</span><div style="display:flex;gap:8px"><input value="{{ cPrintH }}" onInput="{{ onPrintH }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" title="hours" /><input value="{{ cPrintM }}" onInput="{{ onPrintM }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" title="minutes" /></div><div style="font-size:10px;font-weight:700;color:rgba(230,237,247,.38);margin-top:4px">h · min / part</div></div>
+              <div><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62);display:block;margin-bottom:6px">Handling time</span><div style="display:flex;gap:8px"><input value="{{ cLaborH }}" onInput="{{ onLaborH }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" title="hours" /><input value="{{ cLaborM }}" onInput="{{ onLaborM }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" title="minutes" /></div><div style="font-size:10px;font-weight:700;color:rgba(230,237,247,.38);margin-top:4px">h · min / job</div></div>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Hourly rate</span><input value="{{ cRate }}" onInput="{{ onRate }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" /></label>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Hardware / part</span><input value="{{ cHardware }}" onInput="{{ onHardware }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.62)">Packaging / part</span><input value="{{ cPackaging }}" onInput="{{ onPackaging }}" type="number" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:9px 10px;border-radius:10px;font-size:13px;width:100%" /></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== RIGHT: results ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:16px">
+          <div style="border:1px solid rgba(99,102,241,.3);border-radius:20px;background:linear-gradient(160deg,rgba(79,70,229,.2),rgba(124,58,237,.08)),rgba(255,255,255,.02);padding:22px;box-shadow:0 12px 34px rgba(30,20,80,.3)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(199,190,255,.7)">Cost per unit</span><span style="font-size:11.5px;font-weight:800;color:rgba(230,237,247,.55)">{{ batchLabel }}</span></div>
+            <div style="font-size:40px;font-weight:900;margin:6px 0 16px;background:linear-gradient(90deg,#c4b5fd,#93c5fd);-webkit-background-clip:text;background-clip:text;color:transparent">{{ unitCostStr }}</div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700"><span style="color:rgba(230,237,247,.62)">Material</span><span style="font-weight:900">{{ brkMaterial }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700"><span style="color:rgba(230,237,247,.62)">Labor</span><span style="font-weight:900">{{ brkLabor }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700"><span style="color:rgba(230,237,247,.62)">Machine</span><span style="font-weight:900">{{ brkMachine }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700"><span style="color:rgba(230,237,247,.62)">Hardware</span><span style="font-weight:900">{{ brkHardware }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700"><span style="color:rgba(230,237,247,.62)">Packaging</span><span style="font-weight:900">{{ brkPackaging }}</span></div>
+              <div style="height:1px;background:rgba(255,255,255,.1);margin:5px 0"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:900"><span>Base cost</span><span>{{ brkTotal }}</span></div>
+            </div>
+          </div>
+
+          <!-- pricing presets -->
+          <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5)">Sell price</span><div style="flex:1"></div><label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:rgba(230,237,247,.6)">VAT %<input value="{{ cVat }}" onInput="{{ onVat }}" type="number" style="width:52px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:6px 8px;border-radius:8px;font-size:12px" /></label></div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <sc-for list="{{ presets }}" as="p" hint-placeholder-count="5">
+                <div onClick="{{ p.onClick }}" style="display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-radius:12px;cursor:pointer;border:1px solid {{ p.bd }};background:{{ p.bg }}">
+                  <div><div style="font-weight:800;font-size:13px">{{ p.name }}</div><div style="font-size:10.5px;font-weight:700;color:rgba(230,237,247,.5)">{{ p.marginStr }}</div></div>
+                  <div style="text-align:right"><div style="font-weight:900;font-size:14px">{{ p.exVatStr }}</div><div style="font-size:10px;font-weight:700;color:rgba(230,237,247,.5)">{{ p.incVatStr }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)"><span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.6);flex:1">Custom margin %</span><input value="{{ cCustomMargin }}" onInput="{{ onCustomMargin }}" type="number" style="width:70px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:7px 9px;border-radius:9px;font-size:12.5px" /></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- SETTINGS ---------- -->
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:fadeIn .35s ease;max-width:720px">
+      <h1 style="margin:0 0 4px;font-size:24px">Settings</h1>
+      <div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-bottom:18px;font-weight:600">Manage the filament brands available across the app.</div>
+      <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:22px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px"><span style="font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:rgba(230,237,247,.5)">Filament brands</span><span style="font-size:11px;font-weight:700;color:rgba(230,237,247,.4)">used by the Add Filament dropdown</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <input value="{{ newBrandInput }}" onInput="{{ onBrandInput }}" placeholder="Add a brand…" style="flex:1;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#e6edf7;padding:11px 12px;border-radius:11px" />
+          <button onClick="{{ addBrand }}" style="border:none;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:0 20px;border-radius:11px;font-weight:800;cursor:pointer">Add</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ brandChips }}" as="b" hint-placeholder-count="10">
+            <span style="display:flex;align-items:center;gap:8px;padding:7px 9px 7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-size:12.5px;font-weight:800">{{ b.name }}<button onClick="{{ b.remove }}" style="border:none;background:rgba(255,255,255,.08);color:rgba(230,237,247,.6);width:18px;height:18px;border-radius:50%;cursor:pointer;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0">✕</button></span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- PRINTER ---------- -->
+    <sc-if value="{{ isPrinter }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:fadeIn .35s ease">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div><h1 style="margin:0;font-size:24px">Printer Monitor</h1><div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-top:4px;font-weight:600">Live status over MQTT · 2 printers connected</div></div>
+        <div style="flex:1"></div>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:900;color:rgb(52,211,153);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.28);padding:8px 14px;border-radius:999px"><span style="width:8px;height:8px;border-radius:50%;background:rgb(52,211,153);box-shadow:0 0 8px rgba(52,211,153,.6);animation:pulse 2s infinite"></span>MQTT broker online</span>
+      </div>
+      <!-- active printer -->
+      <div style="border:1px solid rgba(99,102,241,.28);border-radius:20px;background:linear-gradient(135deg,rgba(79,70,229,.14),rgba(124,58,237,.06)),rgba(255,255,255,.02);padding:22px;margin-bottom:14px;box-shadow:0 12px 34px rgba(30,20,80,.28)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <span style="width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff" data-html="{{ icPrinter }}"></span>
+          <div><div style="font-weight:900;font-size:18px">X1 Carbon</div><div style="font-size:12px;color:rgba(230,237,247,.55);font-weight:700">192.168.1.42 · benchy_v3.3mf</div></div>
+          <div style="flex:1"></div>
+          <div style="display:flex;gap:9px">
+            <button style="border:1px solid rgba(245,158,11,.35);background:rgba(245,158,11,.14);color:#fcd34d;padding:10px 16px;border-radius:11px;font-weight:800;cursor:pointer">Pause</button>
+            <button style="border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.14);color:#fca5a5;padding:10px 16px;border-radius:11px;font-weight:800;cursor:pointer">Stop</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center">
+          <div style="width:130px;height:130px;border-radius:50%;background:conic-gradient(#7c3aed 0%,#3b82f6 47%,rgba(255,255,255,.07) 47%);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(99,102,241,.35)">
+            <div style="width:100px;height:100px;border-radius:50%;background:#0b1220;display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:32px;font-weight:900;line-height:1">47%</span><span style="font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:rgba(230,237,247,.5);margin-top:2px">Printing</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Remaining</div><div style="font-weight:900;font-size:17px;margin-top:3px">1h 12m</div></div>
+            <div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">ETA</div><div style="font-weight:900;font-size:17px;margin-top:3px">18:42</div></div>
+            <div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Layer</div><div style="font-weight:900;font-size:17px;margin-top:3px">142 / 300</div></div>
+            <div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Speed</div><div style="font-weight:900;font-size:17px;margin-top:3px">100%</div></div>
+            <div style="padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);box-shadow:0 6px 16px rgba(79,70,229,.35)"><div style="font-size:11px;font-weight:800;text-transform:uppercase;color:rgba(255,255,255,.8)">Nozzle</div><div style="font-size:17px;font-weight:900;color:#fff;margin-top:3px">220°</div></div>
+            <div style="padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,#10b981,#06b6d4);box-shadow:0 6px 16px rgba(6,182,212,.3)"><div style="font-size:11px;font-weight:800;text-transform:uppercase;color:rgba(255,255,255,.85)">Bed</div><div style="font-size:17px;font-weight:900;color:#fff;margin-top:3px">60°</div></div>
+            <div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Chamber</div><div style="font-weight:900;font-size:17px;margin-top:3px">38°</div></div>
+            <div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)"><div style="font-size:11px;color:rgba(230,237,247,.6);font-weight:700">Fan</div><div style="font-weight:900;font-size:17px;margin-top:3px">92%</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- idle printer -->
+      <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));padding:18px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+        <span style="width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(148,163,184,.18);color:#cbd5e1" data-html="{{ icPrinter }}"></span>
+        <div style="flex:1"><div style="font-weight:900;font-size:16px;color:rgba(230,237,247,.8)">A1 mini</div><div style="font-size:12px;color:rgba(230,237,247,.5);font-weight:700">192.168.1.51 · idle</div></div>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:rgba(148,163,184,.9)"><span style="width:8px;height:8px;border-radius:50%;background:rgb(148,163,184)"></span>Idle · nozzle 28°</span>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- AMS ---------- -->
+    <sc-if value="{{ isAms }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:fadeIn .35s ease">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div><h1 style="margin:0;font-size:24px">AMS</h1><div style="color:rgba(230,237,247,.6);font-size:12.5px;margin-top:4px;font-weight:600">Automatic Material System · 2 units · 8 slots</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <sc-for list="{{ amsUnits }}" as="u" hint-placeholder-count="2">
+          <div style="border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.28)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+              <span style="width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f97316,#fb7185);color:#fff" data-html="{{ icAms }}"></span>
+              <div style="font-weight:900;font-size:16px">{{ u.name }}</div>
+              <div style="flex:1"></div>
+              <span style="font-size:11px;font-weight:800;color:rgba(230,237,247,.5)">humidity {{ u.humidity }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+              <sc-for list="{{ u.slots }}" as="sl" hint-placeholder-count="4">
+                <div style="border:1px solid {{ sl.border }};border-radius:14px;background:rgba(255,255,255,.02);padding:12px 10px;text-align:center">
+                  <div style="width:100%;height:64px;border-radius:10px;background:{{ sl.hex }};border:1px solid rgba(255,255,255,.14);position:relative;overflow:hidden;box-shadow:inset 0 1px 4px rgba(0,0,0,.35)">
+                    <div style="position:absolute;left:0;right:0;bottom:0;height:{{ sl.pctStr }};background:linear-gradient(0deg,rgba(0,0,0,.28),transparent)"></div>
+                  </div>
+                  <div style="font-size:11px;font-weight:900;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sl.label }}</div>
+                  <div style="font-size:10.5px;font-weight:700;color:rgba(230,237,247,.5);margin-top:2px">{{ sl.sub }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const IC = {
+  inventory:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12V9a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/><path d="M16 20v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/><path d="M20 22V2"/><path d="M4 12h16"/><path d="M4 20h16"/><path d="M4 2v20"/><path d="M4 4h16"/></svg>',
+  add:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"/><path d="M3.29 7 12 12l8.71-5"/><path d="m7.5 4.27 8.997 5.148"/></svg>',
+  spools:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13.44 4.442 17.082A2 2 0 0 0 4.982 21H19a2 2 0 0 0 .558-3.921l-1.115-.32A2 2 0 0 1 17 14.837V7.66"/><path d="m7 10.56 12.558-3.642A2 2 0 0 0 19.018 3H5a2 2 0 0 0-.558 3.921l1.115.32A2 2 0 0 1 7 9.163v7.178"/></svg>',
+  calc:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>',
+  printer:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>',
+  ams:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17a4 4 0 0 1-8 0V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"/><path d="M16.7 13H19a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H7"/><path d="M 7 17h.01"/><path d="m11 8 2.3-2.3a2.4 2.4 0 0 1 3.404.004L18.6 7.6a2.4 2.4 0 0 1 .026 3.434L9.9 19.8"/></svg>',
+  settings:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>',
+  help:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+  pin:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>',
+  plus:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
+  save:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>',
+};
+
+const PROFILES = {
+  'Bambu X1C':{printerPrice:8999,lifetimeYears:4,uptimePercent:85,maintenanceYearly:600,powerWatt:150,electricityPrice:0.2,materialFactor:1.12,bufferFactor:1.25,printTimeMultiplier:0.75},
+  'Bambu P1S':{printerPrice:6499,lifetimeYears:4,uptimePercent:80,maintenanceYearly:500,powerWatt:140,electricityPrice:0.2,materialFactor:1.10,bufferFactor:1.22,printTimeMultiplier:0.8},
+  'Bambu A1':{printerPrice:3999,lifetimeYears:3,uptimePercent:75,maintenanceYearly:400,powerWatt:130,electricityPrice:0.2,materialFactor:1.08,bufferFactor:1.2,printTimeMultiplier:0.9},
+  'Bambu A1 mini':{printerPrice:2999,lifetimeYears:3,uptimePercent:70,maintenanceYearly:350,powerWatt:110,electricityPrice:0.2,materialFactor:1.05,bufferFactor:1.18,printTimeMultiplier:0.95},
+  'Bambu H2S':{printerPrice:14999,lifetimeYears:5,uptimePercent:90,maintenanceYearly:900,powerWatt:220,electricityPrice:0.2,materialFactor:1.15,bufferFactor:1.3,printTimeMultiplier:0.7},
+  'Bambu H2D':{printerPrice:16999,lifetimeYears:5,uptimePercent:92,maintenanceYearly:1000,powerWatt:230,electricityPrice:0.2,materialFactor:1.15,bufferFactor:1.32,printTimeMultiplier:0.68},
+  'Bambu H2C':{printerPrice:18999,lifetimeYears:5,uptimePercent:93,maintenanceYearly:1100,powerWatt:240,electricityPrice:0.2,materialFactor:1.16,bufferFactor:1.35,printTimeMultiplier:0.65},
+};
+
+const PRICE_BY_TYPE = { PLA:149, PETG:179, ABS:169, ASA:199, TPU:249 };
+const RAW = [
+  { brand:'Bambu Lab', name:'Jade White', type:'PLA', finish:'Basic', hex:'#f2f2ec', pct:82, remain:820, spools:2, loc:'Shelf A' },
+  { brand:'Prusament', name:'Galaxy Black', type:'PLA', finish:'Galaxy', hex:'#0c0c12', pct:8, remain:80, spools:1, loc:'Shelf A' },
+  { brand:'Polymaker', name:'Army Green', type:'PETG', finish:'Matte', hex:'#4b5320', pct:45, remain:450, spools:1, loc:'Bin 3' },
+  { brand:'Bambu Lab', name:'Sunflower', type:'PLA', finish:'Matte', hex:'#f4c430', pct:27, remain:270, spools:1, loc:'Shelf B' },
+  { brand:'Sunlu', name:'Silk Copper', type:'PLA', finish:'Silk', hex:'#b87333', pct:63, remain:630, spools:2, loc:'Bin 1' },
+  { brand:'Overture', name:'Space Gray', type:'PETG', finish:'Matte', hex:'#4a4e54', pct:12, remain:120, spools:1, loc:'Shelf B' },
+  { brand:'eSun', name:'Fire Red', type:'ABS', finish:'Glossy', hex:'#cc2b2b', pct:71, remain:710, spools:2, loc:'Bin 2' },
+  { brand:'Bambu Lab', name:'Cyan', type:'PLA', finish:'Basic', hex:'#00b7c3', pct:34, remain:340, spools:1, loc:'Shelf A' },
+  { brand:'Polymaker', name:'Teal', type:'PLA', finish:'Basic', hex:'#008080', pct:90, remain:900, spools:1, loc:'Bin 3' },
+  { brand:'Prusament', name:'Prusa Orange', type:'PETG', finish:'Glossy', hex:'#ff7a00', pct:55, remain:550, spools:1, loc:'Shelf B' },
+  { brand:'Bambu Lab', name:'Matte Charcoal', type:'PLA', finish:'Matte', hex:'#2b2b2b', pct:18, remain:180, spools:1, loc:'Shelf A' },
+  { brand:'Sunlu', name:'Grape Purple', type:'PLA', finish:'Silk', hex:'#6a0dad', pct:48, remain:480, spools:1, loc:'Bin 1' },
+  { brand:'Bambu Lab', name:'Bambu Green', type:'PETG', finish:'HF', hex:'#3f9b4f', pct:5, remain:50, spools:1, loc:'Shelf B' },
+  { brand:'Overture', name:'Clear', type:'PETG', finish:'Clear', hex:'#c7dbe6', pct:68, remain:680, spools:1, loc:'Bin 2' },
+];
+const SPOOL_TYPES = [ {id:'reusable',label:'Reusable spool',short:'Reusable'}, {id:'refill',label:'Cardboard refill',short:'Refill'}, {id:'non-reusable',label:'Non-reusable',short:'Non-reuse'} ];
+const SPOOL_TYPE_STYLE = { reusable:{c:'#34d399',bg:'rgba(16,185,129,.14)'}, refill:{c:'#93c5fd',bg:'rgba(59,130,246,.14)'}, 'non-reusable':{c:'#cbd5e1',bg:'rgba(148,163,184,.16)'} };
+function seedSpools(){ const out={}; RAW.forEach((f,i)=>{ const ppk=PRICE_BY_TYPE[f.type]||149; const arr=[]; for(let k=0;k<f.spools;k++){ arr.push({ id:i+'-'+k, price:ppk+k*20, type:SPOOL_TYPES[k%3].id, remaining: k===0?f.remain:1000, total:1000 }); } out[i]=arr; }); return out; }
+
+class Component extends DCLogic {
+  state = {
+    screen:'inventory',
+    partName:'Bracket v2', profile:'Bambu X1C', openFilament:null, spoolsByFil:seedSpools(), newSpoolPrice:0, newSpoolType:'reusable', useGrams:'', newFilType:'reusable', emptyReusable:1,
+    brands:['Bambu Lab','Prusament','Polymaker','Sunlu','Overture','eSun','Hatchbox','ColorFabb','Fillamentum','Creality','Elegoo','Anycubic','MatterHackers','3DXTech'],
+    newBrand:'Bambu Lab', newColorName:'Jade White', newHex:'#F2F2EC', newBrandInput:'',
+    printerPrice:8999, lifetimeYears:4, uptimePercent:85, maintenanceYearly:600,
+    powerWatt:150, electricityPrice:0.2, materialFactor:1.12, bufferFactor:1.25, printTimeMultiplier:0.75,
+    printHours:6, printMinutes:30, laborHours:0, laborMinutes:15, hourlyRate:250,
+    hardwareCost:0, packagingCost:5, vatRate:25, customMargin:50, preset:'standard',
+    materials:[{ filamentId:'0', pricePerKg:149, weightGrams:85 }],
+  };
+
+  set(key){ return () => this.setState({ screen:key }); }
+  text(k){ return (e)=> this.setState({ [k]: e.target.value }); }
+  _deleteSpool(i,id){ const list=(this.state.spoolsByFil[i]||[]).filter(sp=>sp.id!==id); this.setState({ spoolsByFil:{ ...this.state.spoolsByFil, [i]:list } }); }
+  _addSpool(i){ const ppk=PRICE_BY_TYPE[RAW[i].type]||149; const price=Number(this.state.newSpoolPrice)>0?Number(this.state.newSpoolPrice):ppk; const type=this.state.newSpoolType||'reusable'; const sp={ id:i+'-a'+Date.now(), price, type, remaining:1000, total:1000 }; const consume = type==='refill' && (this.state.emptyReusable||0)>0; this.setState({ spoolsByFil:{ ...this.state.spoolsByFil, [i]:[...(this.state.spoolsByFil[i]||[]), sp] }, emptyReusable:(this.state.emptyReusable||0)-(consume?1:0) }); }
+  _logUse(i){ let rem=Number(this.state.useGrams)||0; if(rem<=0) return; let list=(this.state.spoolsByFil[i]||[]).map(sp=>({...sp})); for(const sp of list){ if(rem<=0)break; const take=Math.min(sp.remaining,rem); sp.remaining-=take; rem-=take; } let add=0; list=list.filter(sp=>{ if(sp.remaining>0.001) return true; if(sp.type==='reusable'){ add++; return false; } return false; }); this.setState({ spoolsByFil:{ ...this.state.spoolsByFil, [i]:list }, emptyReusable:(this.state.emptyReusable||0)+add, useGrams:'' }); }
+  field(k,int){ return (e)=>{ const v=e.target.value; this.setState({ [k]: v===''?'':(int?parseInt(v,10):Number(v)) }); }; }
+  selectPreset(id){ return ()=> this.setState({ preset:id }); }
+  selectProfile = (e)=>{
+    const name=e.target.value, p=PROFILES[name];
+    if(!p){ this.setState({ profile:name, printTimeMultiplier:1 }); return; }
+    this.setState({ profile:name, printerPrice:p.printerPrice, lifetimeYears:p.lifetimeYears, uptimePercent:p.uptimePercent,
+      maintenanceYearly:p.maintenanceYearly, powerWatt:p.powerWatt, electricityPrice:p.electricityPrice,
+      materialFactor:p.materialFactor, bufferFactor:p.bufferFactor, printTimeMultiplier:p.printTimeMultiplier });
+  };
+  addMaterial = ()=> this.setState({ materials:[...this.state.materials, { filamentId:'', pricePerKg:149, weightGrams:0 }] });
+
+  renderVals() {
+    const s = this.state.screen;
+    const ICBG = {
+      inventory:'linear-gradient(135deg,#06b6d4,#3b82f6)', add:'linear-gradient(135deg,#22c55e,#10b981)',
+      spools:'linear-gradient(135deg,#f59e0b,#ef4444)', calc:'linear-gradient(135deg,#8b5cf6,#6366f1)',
+      printer:'linear-gradient(135deg,#3b82f6,#2563eb)', ams:'linear-gradient(135deg,#f97316,#fb7185)',
+      settings:'linear-gradient(135deg,#64748b,#475569)', help:'linear-gradient(135deg,#0ea5e9,#3b82f6)',
+    };
+    const mkNav = (key, label, icon) => {
+      const active = s === key;
+      return { label, icon, go:this.set(key), icbg:ICBG[key],
+        bd: active ? '#c084fc' : 'rgba(255,255,255,.08)',
+        bg: active ? 'linear-gradient(180deg,rgba(192,132,252,.22),rgba(236,72,153,.14))' : 'transparent',
+        fg: active ? '#fff' : 'rgba(230,237,247,.82)',
+        glow: active ? '0 0 10px #c084fc55,0 0 18px #ec489922' : 'none' };
+    };
+    const nav = [
+      mkNav('inventory','Inventory',IC.inventory), mkNav('add','Add Filament',IC.add),
+      mkNav('spools','Spools',IC.spools), mkNav('calc','Calculator',IC.calc),
+      mkNav('printer','Printer',IC.printer), mkNav('ams','AMS',IC.ams),
+    ];
+    const navFoot = [ mkNav('settings','Settings',IC.settings), mkNav('help','Help',IC.help) ];
+
+    const TYPE = {
+      PLA:['rgba(16,185,129,.40)','rgba(16,185,129,.14)','#10b981'],
+      PETG:['rgba(59,130,246,.40)','rgba(59,130,246,.14)','#3b82f6'],
+      ABS:['rgba(239,68,68,.40)','rgba(239,68,68,.14)','#ef4444'],
+      ASA:['rgba(245,158,11,.40)','rgba(245,158,11,.14)','#f59e0b'],
+      TPU:['rgba(168,85,247,.40)','rgba(168,85,247,.14)','#a855f7'],
+    };
+    const priceByType = { PLA:149, PETG:179, ABS:169, ASA:199, TPU:249 };
+    const raw = [
+      { brand:'Bambu Lab', name:'Jade White',    type:'PLA',  finish:'Basic',  hex:'#f2f2ec', pct:82, remain:820, spools:2, loc:'Shelf A' },
+      { brand:'Prusament', name:'Galaxy Black',   type:'PLA',  finish:'Galaxy', hex:'#0c0c12', pct:8,  remain:80,  spools:1, loc:'Shelf A' },
+      { brand:'Polymaker', name:'Army Green',     type:'PETG', finish:'Matte',  hex:'#4b5320', pct:45, remain:450, spools:1, loc:'Bin 3'  },
+      { brand:'Bambu Lab', name:'Sunflower',      type:'PLA',  finish:'Matte',  hex:'#f4c430', pct:27, remain:270, spools:1, loc:'Shelf B' },
+      { brand:'Sunlu',     name:'Silk Copper',    type:'PLA',  finish:'Silk',   hex:'#b87333', pct:63, remain:630, spools:2, loc:'Bin 1'  },
+      { brand:'Overture',  name:'Space Gray',     type:'PETG', finish:'Matte',  hex:'#4a4e54', pct:12, remain:120, spools:1, loc:'Shelf B' },
+      { brand:'eSun',      name:'Fire Red',       type:'ABS',  finish:'Glossy', hex:'#cc2b2b', pct:71, remain:710, spools:2, loc:'Bin 2'  },
+      { brand:'Bambu Lab', name:'Cyan',           type:'PLA',  finish:'Basic',  hex:'#00b7c3', pct:34, remain:340, spools:1, loc:'Shelf A' },
+      { brand:'Polymaker', name:'Teal',           type:'PLA',  finish:'Basic',  hex:'#008080', pct:90, remain:900, spools:1, loc:'Bin 3'  },
+      { brand:'Prusament', name:'Prusa Orange',   type:'PETG', finish:'Glossy', hex:'#ff7a00', pct:55, remain:550, spools:1, loc:'Shelf B' },
+      { brand:'Bambu Lab', name:'Matte Charcoal', type:'PLA',  finish:'Matte',  hex:'#2b2b2b', pct:18, remain:180, spools:1, loc:'Shelf A' },
+      { brand:'Sunlu',     name:'Grape Purple',   type:'PLA',  finish:'Silk',   hex:'#6a0dad', pct:48, remain:480, spools:1, loc:'Bin 1'  },
+      { brand:'Bambu Lab', name:'Bambu Green',    type:'PETG', finish:'HF',     hex:'#3f9b4f', pct:5,  remain:50,  spools:1, loc:'Shelf B' },
+      { brand:'Overture',  name:'Clear',          type:'PETG', finish:'Clear',  hex:'#c7dbe6', pct:68, remain:680, spools:1, loc:'Bin 2'  },
+    ];
+    const badge = {
+      ok:{ rail:'rgba(16,185,129,.9)', txt:'OK', dot:'#10b981', bg:'rgba(16,185,129,.85)', color:'#34d399' },
+      low:{ rail:'rgba(245,158,11,.95)', txt:'LOW', dot:'#f59e0b', bg:'rgba(245,158,11,.9)', color:'#fbbf24' },
+      critical:{ rail:'rgba(239,68,68,.98)', txt:'CRIT', dot:'#ef4444', bg:'rgba(239,68,68,.95)', color:'#f87171' },
+    };
+    const barOk = 'linear-gradient(90deg,rgba(16,185,129,.95),rgba(59,130,246,.95))';
+    const barLow = 'linear-gradient(90deg,rgba(245,158,11,.98),rgba(239,68,68,.95))';
+    const lum = (hex) => { const c=hex.replace('#',''); return 0.299*parseInt(c.substr(0,2),16)+0.587*parseInt(c.substr(2,2),16)+0.114*parseInt(c.substr(4,2),16); };
+    const kr0 = (v)=> new Intl.NumberFormat('da-DK',{style:'currency',currency:'DKK',maximumFractionDigits:0}).format(Math.round(v||0));
+    const spoolsByFil = this.state.spoolsByFil || {};
+    const gnum = (v)=> (v===''||v==null||isNaN(v))?0:Number(v);
+    const enrich = (f,i) => {
+      const list = spoolsByFil[i] || [];
+      const spoolCount = list.length;
+      const totalRemain = list.reduce((s,sp)=>s+gnum(sp.remaining),0);
+      const totalCap = list.reduce((s,sp)=>s+gnum(sp.total),0) || 1000;
+      const pct = Math.round(totalCap ? (totalRemain/totalCap*100) : 0);
+      const st = pct>=40?'ok':(pct>=15?'low':'critical'); const b=badge[st]; const t=TYPE[f.type]||TYPE.PLA;
+      const ppk = priceByType[f.type]||149;
+      const avgPrice = spoolCount ? list.reduce((s,sp)=>s+gnum(sp.price),0)/spoolCount : 0;
+      const estValue = list.reduce((s,sp)=> s + (gnum(sp.total)? gnum(sp.remaining)/gnum(sp.total):0)*gnum(sp.price), 0);
+      const purchases = list.map((sp,k)=>{ const ty=SPOOL_TYPE_STYLE[sp.type]||SPOOL_TYPE_STYLE.reusable; const tl=(SPOOL_TYPES.find(x=>x.id===sp.type)||SPOOL_TYPES[0]).short;
+        return { id:sp.id, label:'Spool #'+(k+1), priceStr:kr0(sp.price), spoolRemainStr:gnum(sp.remaining)+' g',
+          typeLabel:tl, typeColor:ty.c, typeBg:ty.bg, deleteSpool:()=>this._deleteSpool(i,sp.id) }; });
+      return { ...f, index:i, status:st, rail:b.rail, badge:b.txt, dot:b.dot, badgeBg:b.bg, statusColor:b.color,
+        pct, pctStr:pct+'%', barBg: st==='ok'?barOk:barLow, typeBorder:t[0], typeBg:t[1], typeColor:t[2],
+        remainStr:totalRemain+' g', daysStr:'~'+Math.max(1,Math.round((totalRemain||1)/26))+' days',
+        pricePerKg: ppk,
+        spoolCount, hasMulti: spoolCount>1, avgPrice, avgPriceStr:kr0(avgPrice), estValueStr:kr0(estValue), purchases,
+        open:()=> this.setState({ openFilament:i, newSpoolPrice:ppk, useGrams:'' }),
+        addSpool:()=> this._addSpool(i),
+        logUse:()=> this._logUse(i),
+        nameShadow: lum(f.hex)>150 ? '0 1px 2px rgba(0,0,0,.35)' : '0 1px 3px rgba(0,0,0,.7)' };
+    };
+    const filaments = raw.map((f,i)=>enrich(f,i));
+    const spools = raw.slice(0,10).map((f,i)=>enrich(f,i));
+
+    const TL = (id)=>(SPOOL_TYPES.find(x=>x.id===id)||SPOOL_TYPES[0]).short;
+    const flatSpools = [];
+    filaments.forEach((f)=>{ (spoolsByFil[f.index]||[]).forEach((sp)=>{ const pct=Math.round(sp.total?sp.remaining/sp.total*100:0); const ty=SPOOL_TYPE_STYLE[sp.type]||SPOOL_TYPE_STYLE.reusable; const st=pct>=40?'ok':(pct>=15?'low':'critical'); const bd=badge[st];
+      flatSpools.push({ id:sp.id, hex:f.hex, name:f.name, brand:f.brand, matType:f.type, matBorder:f.typeBorder, matBg:f.typeBg, matColor:f.typeColor,
+        spoolTypeLabel:TL(sp.type), spoolTypeColor:ty.c, spoolTypeBg:ty.bg,
+        remainStr:sp.remaining+' g', pctStr:pct+'%', barBg: st==='ok'?barOk:barLow, priceStr:kr0(sp.price), loc:f.loc }); }); });
+    const emptyReusableCount = this.state.emptyReusable||0;
+    const emptyReusableList = Array.from({length:emptyReusableCount},(_,k)=>({ n:k+1 }));
+
+    // ---------- CALCULATOR MODEL ----------
+    const cs = this.state;
+    const num = (v)=> (v===''||v==null||isNaN(v))?0:Number(v);
+    const fmt = (v)=> new Intl.NumberFormat('da-DK',{style:'currency',currency:'DKK',minimumFractionDigits:2}).format(v||0);
+
+    const filamentOptions = [{ id:'', label:'Manual entry', pricePerKg:0 }]
+      .concat(filaments.map((f,i)=>({ id:String(i), label:f.brand+' · '+f.name, pricePerKg:f.pricePerKg })));
+
+    const materialsView = cs.materials.map((m,i)=>{
+      const locked = m.filamentId!=='' && m.filamentId!=null;
+      return { filamentId:m.filamentId, pricePerKg:m.pricePerKg, weightGrams:m.weightGrams,
+        priceLocked:locked, priceBg: locked?'rgba(255,255,255,.015)':'rgba(255,255,255,.03)', priceOpacity: locked?0.6:1,
+        onSelect:(e)=>{ const id=e.target.value; let price=m.pricePerKg;
+          if(id!==''){ const fo=filamentOptions.find(o=>o.id===id); if(fo) price=fo.pricePerKg; }
+          this.setState({ materials: cs.materials.map((mm,idx)=> idx===i?{...mm,filamentId:id,pricePerKg:price}:mm) }); },
+        onPrice:(e)=>{ const v=e.target.value; this.setState({ materials: cs.materials.map((mm,idx)=> idx===i?{...mm,pricePerKg:v===''?'':Number(v)}:mm) }); },
+        onWeight:(e)=>{ const v=e.target.value; this.setState({ materials: cs.materials.map((mm,idx)=> idx===i?{...mm,weightGrams:v===''?'':Number(v)}:mm) }); },
+        onRemove:()=>{ const arr=cs.materials.filter((_,idx)=>idx!==i); this.setState({ materials: arr.length?arr:[{filamentId:'',pricePerKg:149,weightGrams:0}] }); },
+      };
+    });
+
+    const uptime = Math.max(0.1, num(cs.uptimePercent)/100);
+    const yearlyHours = 365*24*uptime;
+    const lifetimeHours = num(cs.lifetimeYears)*yearlyHours;
+    const machineRate = (lifetimeHours>0?num(cs.printerPrice)/lifetimeHours:0)
+      + (yearlyHours>0?num(cs.maintenanceYearly)/yearlyHours:0)
+      + (num(cs.powerWatt)/1000)*num(cs.electricityPrice);
+
+    const mult = num(cs.printTimeMultiplier)||1;
+    const printHoursPerPart = (num(cs.printHours)+num(cs.printMinutes)/60)*mult;
+    const handlingHours = num(cs.laborHours)+num(cs.laborMinutes)/60;
+    const batch = 1;
+    const matFactor = num(cs.materialFactor)||1;
+    const buffer = num(cs.bufferFactor)||1;
+
+    const materialPerUnit = cs.materials.reduce((sum,m)=> sum + (num(m.weightGrams)/1000*matFactor)*num(m.pricePerKg), 0);
+    const machinePerUnit = printHoursPerPart*machineRate;
+    const hardwarePerUnit = num(cs.hardwareCost);
+    const packagingPerUnit = num(cs.packagingCost);
+    const laborTotal = handlingHours*num(cs.hourlyRate);
+
+    const totalForQty = (q)=> ((materialPerUnit+machinePerUnit+hardwarePerUnit+packagingPerUnit)*q + laborTotal)*buffer;
+    const unitForQty = (q)=> totalForQty(q)/q;
+    const baseCostPerUnit = unitForQty(batch);
+    const laborPerUnit = (laborTotal*buffer)/batch;
+
+    const vat = num(cs.vatRate)/100;
+    const presetDefs = [
+      { id:'competitive', name:'Competitive', margin:25 },
+      { id:'standard', name:'Standard', margin:40 },
+      { id:'premium', name:'Premium', margin:60 },
+      { id:'luxury', name:'Luxury', margin:80 },
+      { id:'custom', name:'Custom', margin:null },
+    ];
+    const presets = presetDefs.map(p=>{
+      const margin = p.id==='custom'? num(cs.customMargin) : p.margin;
+      const exVat = baseCostPerUnit*(1+margin/100);
+      const incVat = exVat*(1+vat);
+      const sel = p.id===cs.preset;
+      return { name:p.name, id:p.id, marginStr:(p.id==='custom'?'your margin':p.margin+'% margin'),
+        exVatStr:fmt(exVat), incVatStr:fmt(incVat)+' incl. VAT', onClick:this.selectPreset(p.id),
+        bd: sel?'#c084fc':'rgba(255,255,255,.08)',
+        bg: sel?'radial-gradient(circle at top left,rgba(192,132,252,.2),rgba(255,255,255,.02))':'rgba(255,255,255,.02)' };
+    });
+    const batchRowsUnused = null;
+    const profileOptions = ['Bambu X1C','Bambu P1S','Bambu A1','Bambu A1 mini','Bambu H2S','Bambu H2D','Bambu H2C','Custom'];
+
+    const hx = (this.state.newHex||'').trim();
+    const newHexSafe = /^#[0-9a-fA-F]{6}$/.test(hx) ? hx : '#8a8f99';
+    const brandChips = (this.state.brands||[]).map((name,i)=>({ name, remove:()=>this.setState({ brands: this.state.brands.filter((_,idx)=>idx!==i) }) }));
+
+    // AMS
+    const slot = (label, sub, hex, pct, border) => ({ label, sub, hex, pctStr:pct+'%', border: border||'rgba(255,255,255,.08)' });
+    const amsUnits = [
+      { name:'AMS · Unit 1', humidity:'23%', slots:[
+        slot('Jade White','PLA · 82%','#f2f2ec',82), slot('Fire Red','ABS · 71%','#cc2b2b',71),
+        slot('Cyan','PLA · 34%','#00b7c3',34,'rgba(245,158,11,.4)'), slot('Empty','—','#141c2b',0,'rgba(255,255,255,.06)'),
+      ]},
+      { name:'AMS · Unit 2', humidity:'19%', slots:[
+        slot('Prusa Orange','PETG · 55%','#ff7a00',55), slot('Grape Purple','PLA · 48%','#6a0dad',48),
+        slot('Bambu Green','PETG · 5%','#3f9b4f',5,'rgba(239,68,68,.45)'), slot('Clear','PETG · 68%','#c7dbe6',68),
+      ]},
+    ];
+
+    const invFilters = ['All','PLA','PETG','Low'].map((l,i)=>({ label:l,
+      bg: i===0?'rgba(255,255,255,.08)':'transparent', fg: i===0?'#e6edf7':'rgba(230,237,247,.6)' }));
+
+    return {
+      nav, navFoot,
+      isInventory:s==='inventory', isAdd:s==='add', isSpools:s==='spools',
+      isCalc:s==='calc', isPrinter:s==='printer', isAms:s==='ams', isSettings:s==='settings',
+      goInventory:this.set('inventory'), goAdd:this.set('add'),
+      icPrinter:IC.printer, icAms:IC.ams, icSearch:IC.search, icPin:IC.pin,
+      addBtnInner:IC.plus+'<span style="margin-left:2px">Add Filament</span>',
+      saveBtnInner:IC.save+'<span style="margin-left:2px">Save Filament</span>',
+      filaments, spools, amsUnits, invFilters,
+      flatSpools, emptyReusableCount, emptyReusableList, physicalCount:flatSpools.length,
+      hasEmptyReusable: emptyReusableCount>0, noEmptyReusable: emptyReusableCount===0,
+      brands:this.state.brands, newBrand:this.state.newBrand, onNewBrand:this.text('newBrand'),
+      newColorName:this.state.newColorName, onNewColorName:this.text('newColorName'),
+      newHex:this.state.newHex, newHexSafe, onNewHex:this.text('newHex'),
+      newSpoolPrice:this.state.newSpoolPrice, onSpoolPrice:this.field('newSpoolPrice'),
+      brandChips, newBrandInput:this.state.newBrandInput, onBrandInput:this.text('newBrandInput'),
+      addBrand:()=>{ const v=(this.state.newBrandInput||'').trim(); if(v && !(this.state.brands||[]).includes(v)) this.setState({ brands:[...(this.state.brands||[]), v], newBrandInput:'' }); },
+      spoolTypes:SPOOL_TYPES, newSpoolType:this.state.newSpoolType, onNewSpoolType:this.text('newSpoolType'),
+      useGrams:this.state.useGrams, onUseGrams:this.field('useGrams'),
+      newFilType:this.state.newFilType, onNewFilType:this.text('newFilType'),
+      modalOpen: cs.openFilament!=null, mF: (cs.openFilament!=null ? filaments[cs.openFilament] : {}),
+      closeModal:()=>this.setState({openFilament:null}), stopProp:(e)=>e.stopPropagation(),
+      cPartName:cs.partName, cProfile:cs.profile, profileOptions,
+      cPrinterPrice:cs.printerPrice, cLifetime:cs.lifetimeYears, cUptime:cs.uptimePercent, cMaint:cs.maintenanceYearly,
+      cPower:cs.powerWatt, cElec:cs.electricityPrice, cMatFactor:cs.materialFactor, cBuffer:cs.bufferFactor,
+      cPrintH:cs.printHours, cPrintM:cs.printMinutes, cLaborH:cs.laborHours, cLaborM:cs.laborMinutes, cRate:cs.hourlyRate,
+      cHardware:cs.hardwareCost, cPackaging:cs.packagingCost, cVat:cs.vatRate, cCustomMargin:cs.customMargin,
+      onPartName:this.text('partName'), onProfile:this.selectProfile,
+      onPrinterPrice:this.field('printerPrice'), onLifetime:this.field('lifetimeYears'), onUptime:this.field('uptimePercent'), onMaint:this.field('maintenanceYearly'),
+      onPower:this.field('powerWatt'), onElec:this.field('electricityPrice'), onMatFactor:this.field('materialFactor'), onBuffer:this.field('bufferFactor'),
+      onPrintH:this.field('printHours'), onPrintM:this.field('printMinutes'), onLaborH:this.field('laborHours'), onLaborM:this.field('laborMinutes'), onRate:this.field('hourlyRate'),
+      onHardware:this.field('hardwareCost'), onPackaging:this.field('packagingCost'), onVat:this.field('vatRate'), onCustomMargin:this.field('customMargin'),
+      materialsView, filamentOptions, addMaterial:this.addMaterial,
+      unitCostStr:fmt(baseCostPerUnit), batchLabel:'per part',
+      brkMaterial:fmt(materialPerUnit*buffer), brkLabor:fmt(laborPerUnit), brkMachine:fmt(machinePerUnit*buffer),
+      brkHardware:fmt(hardwarePerUnit*buffer), brkPackaging:fmt(packagingPerUnit*buffer), brkTotal:fmt(baseCostPerUnit),
+      presets,
+    };
+  }
+
+  componentDidUpdate(){ this._paintHtml(); }
+  componentDidMount(){ this._paintHtml(); }
+  _paintHtml(){
+    const root = this._root || document;
+    (root.querySelectorAll ? root : document).querySelectorAll('[data-html]').forEach(el => {
+      const v = el.getAttribute('data-html');
+      if (v && el.innerHTML !== v) el.innerHTML = v;
+    });
+  }
+}
+</script>
+</body>
+</html>
