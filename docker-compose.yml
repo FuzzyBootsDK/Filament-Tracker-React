@@ -4,7 +4,7 @@ services:
     container_name: filament-tracker
     restart: unless-stopped
     ports:
-      - "3001:3001"    # Web UI + API
+      - "8001:3001"    # Web UI + API  (host 8001 -> container 3001)
       - "1883:1883"    # MQTT relay (optional, enabled in Settings)
     volumes:
       - ./data:/app/data
@@ -12,10 +12,10 @@ services:
       NODE_ENV: production
       PORT: "3001"
       DATA_DIR: /app/data
-      JWT_SECRET: "change-this-to-a-random-secret"
-      CORS_ORIGIN: "http://localhost:3001"
-    network_mode: host
-    # Use host networking so the backend can reach Bambu printers on your LAN.
-    # If you prefer bridge networking, remove 'network_mode: host' and add:
-    #   extra_hosts:
-    #     - "host-gateway:host-gateway"
+      JWT_SECRET: "${JWT_SECRET:?set JWT_SECRET in .env}"
+      CORS_ORIGIN: "http://localhost:8001"
+    # Bridge networking (host networking is not supported on Docker Desktop for
+    # Windows). Outbound connections to Bambu printers on the LAN work fine;
+    # only multicast/broadcast auto-discovery is unavailable — add printers by IP.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

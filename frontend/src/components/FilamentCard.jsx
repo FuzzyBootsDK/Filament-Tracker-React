@@ -4,6 +4,7 @@ const TYPE_COLORS = {
   ABS: ['rgba(239,68,68,.40)', 'rgba(239,68,68,.14)', '#ef4444'],
   ASA: ['rgba(245,158,11,.40)', 'rgba(245,158,11,.14)', '#f59e0b'],
   TPU: ['rgba(168,85,247,.40)', 'rgba(168,85,247,.14)', '#a855f7'],
+  'PLA Pure': ['rgba(6,182,212,.40)', 'rgba(6,182,212,.14)', '#06b6d4'],
 };
 
 const PIN_IC = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
@@ -22,7 +23,18 @@ function badgeFor(pct, threshold) {
   return { dot: '#10b981', txt: 'OK', color: '#34d399', bg: 'rgba(16,185,129,.15)' };
 }
 
-export default function FilamentCard({ filament, onClick }) {
+// Global low-stock glow settings (grams remaining). Falls back to the seeded defaults
+// when Settings hasn't loaded yet.
+function glowLevelFor(remaining, glow) {
+  if (!glow || glow.enabled === false) return null;
+  const crit = Number(glow.crit);
+  const warn = Number(glow.warn);
+  if (Number.isFinite(crit) && crit > 0 && remaining <= crit) return 'crit';
+  if (Number.isFinite(warn) && warn > 0 && remaining <= warn) return 'warn';
+  return null;
+}
+
+export default function FilamentCard({ filament, onClick, glow }) {
   const {
     name, brand_name, material = 'PLA', finish = 'Basic',
     color_hex = '#6366f1', spool_count = 0, total_remaining = 0,
@@ -38,6 +50,8 @@ export default function FilamentCard({ filament, onClick }) {
   const lum = luminance(color_hex);
   const nameShadow = lum > 128 ? '0 1px 3px rgba(0,0,0,.6)' : 'none';
 
+  const glowLevel = glowLevelFor(total_remaining, glow);
+
   const daysLeft = avg_price && total_remaining
     ? Math.round(total_remaining / 5) // rough estimate: ~5g/day average
     : null;
@@ -45,6 +59,7 @@ export default function FilamentCard({ filament, onClick }) {
   return (
     <div
       onClick={onClick}
+      className={glowLevel ? `glow-${glowLevel}` : undefined}
       style={{
         border: '1px solid rgba(255,255,255,.09)',
         background: 'linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02))',
@@ -52,8 +67,8 @@ export default function FilamentCard({ filament, onClick }) {
         boxShadow: '0 8px 24px rgba(0,0,0,.28)',
         transition: 'transform .15s, box-shadow .15s',
       }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 14px 34px rgba(0,0,0,.4)'; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.28)'; }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; if (!glowLevel) e.currentTarget.style.boxShadow = '0 14px 34px rgba(0,0,0,.4)'; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = ''; if (!glowLevel) e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.28)'; }}
     >
       {/* Swatch header */}
       <div style={{ height: 88, position: 'relative', background: color_hex }}>

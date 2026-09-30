@@ -20,6 +20,7 @@ import printersRoutes from './routes/printers.js';
 import amsRoutes from './routes/ams.js';
 import printJobsRoutes from './routes/printJobs.js';
 import settingsRoutes from './routes/settings.js';
+import publicRoutes from './routes/public.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -37,6 +38,10 @@ wss.on('connection', (ws) => {
     try { const d = JSON.parse(raw); if (d.type === 'ping') ws.send(JSON.stringify({ type: 'pong' })); } catch {}
   });
 });
+
+// Public webstore API: mounted before the credentialed CORS layer below so it
+// can serve Access-Control-Allow-Origin: * without a conflicting credentials header.
+app.use('/api/public', publicRoutes);
 
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 app.use(cors({ origin: CORS_ORIGIN, credentials: true }));

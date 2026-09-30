@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { filaments as filamentsApi, spools as spoolsApi } from '../api/client.js';
+import { filaments as filamentsApi, spools as spoolsApi, settings as settingsApi } from '../api/client.js';
 import FilamentCard from '../components/FilamentCard.jsx';
 import LiveTracker from '../components/LiveTracker.jsx';
 import Modal from '../components/Modal.jsx';
@@ -24,6 +24,7 @@ const TYPE_COLORS = {
   ABS: ['rgba(239,68,68,.40)', 'rgba(239,68,68,.14)', '#ef4444'],
   ASA: ['rgba(245,158,11,.40)', 'rgba(245,158,11,.14)', '#f59e0b'],
   TPU: ['rgba(168,85,247,.40)', 'rgba(168,85,247,.14)', '#a855f7'],
+  'PLA Pure': ['rgba(6,182,212,.40)', 'rgba(6,182,212,.14)', '#06b6d4'],
 };
 
 const SEARCH_IC = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>';
@@ -36,7 +37,7 @@ const SPOOL_TYPES = [
   { id: 'refill', label: 'Cardboard refill' },
 ];
 
-const FILTERS = ['All', 'PLA', 'PETG', 'ABS', 'ASA', 'TPU'];
+const FILTERS = ['All', 'PLA', 'PLA Pure', 'PETG', 'ABS', 'ASA', 'TPU'];
 
 export default function Inventory() {
   const navigate = useNavigate();
@@ -51,10 +52,16 @@ export default function Inventory() {
   const [newSpoolType, setNewSpoolType] = useState('non-reusable');
   const [loading, setLoading] = useState(true);
   const [importResult, setImportResult] = useState(null);
+  const [glow, setGlow] = useState(null);
   const importRef = useRef();
 
   useEffect(() => {
     loadFilaments();
+    settingsApi.get().then(s => setGlow({
+      enabled: String(s.glow_enabled ?? 'true') === 'true',
+      warn: Number(s.glow_warn_threshold ?? 300),
+      crit: Number(s.glow_crit_threshold ?? 100),
+    })).catch(() => {});
   }, []);
 
   async function loadFilaments() {
@@ -139,6 +146,13 @@ export default function Inventory() {
     await spoolsApi.delete(spoolId);
     const updated = await spoolsApi.list(selectedFilament.id);
     setSpoolList(updated);
+    loadFilaments();
+  }
+
+  async function handleDeleteFilament() {
+    await filamentsApi.delete(selectedFilament.id);
+    setSelectedFilament(null);
+    setSpoolList([]);
     loadFilaments();
   }
 
@@ -276,7 +290,7 @@ export default function Inventory() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(224px,1fr))', gap: 14 }}>
           {filtered.map(f => (
-            <FilamentCard key={f.id} filament={f} onClick={() => openModal(f)} />
+            <FilamentCard key={f.id} filament={f} glow={glow} onClick={() => openModal(f)} />
           ))}
         </div>
       )}
@@ -297,6 +311,7 @@ export default function Inventory() {
             onLogUse={handleLogUse}
             onAddSpool={handleAddSpool}
             onDeleteSpool={handleDeleteSpool}
+            onDeleteFilament={handleDeleteFilament}
             onLoad={handleLoad}
             onUnload={handleUnload}
             onClose={() => setSelectedFilament(null)}
@@ -308,11 +323,13 @@ export default function Inventory() {
   );
 }
 
-function FilamentModal({ filament, spools, reusableHolders, useGrams, setUseGrams, newSpoolPrice, setNewSpoolPrice, newSpoolType, setNewSpoolType, onLogUse, onAddSpool, onDeleteSpool, onLoad, onUnload, onClose, onEdit }) {
+function FilamentModal({ filament, spools, reusableHolders, useGrams, setUseGrams, newSpoolPrice, setNewSpoolPrice, newSpoolType, setNewSpoolType, onLogUse, onAddSpool, onDeleteSpool, onDeleteFilament, onLoad, onUnload, onClose, onEdit }) {
   const { name, brand_name, material = 'PLA', finish, color_hex = '#6366f1', spool_weight = 1000, avg_price, price_per_kg } = filament;
   const [typeBorder, typeBg, typeColor] = TYPE_COLORS[material] || TYPE_COLORS.PLA;
   const [loadingRefillId, setLoadingRefillId] = useState(null);
   const [selectedHolder, setSelectedHolder] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const activeSpools = spools.filter(sp => sp.spool_type !== 'refill');
   const refills = spools.filter(sp => sp.spool_type === 'refill');
@@ -488,7 +505,46 @@ function FilamentModal({ filament, spools, reusableHolders, useGrams, setUseGram
             color: '#e6edf7', padding: '5px 12px', borderRadius: 8,
             fontWeight: 800, fontSize: 12, cursor: 'pointer',
           }}>Edit</button>
+          <button onClick={() => setConfirmDelete(true)} title="Delete this filament and all its spools" style={{
+            border: '1px solid rgba(239,68,68,.28)', background: 'rgba(239,68,68,.1)',
+            color: '#f87171', padding: '5px 12px', borderRadius: 8,
+            fontWeight: 800, fontSize: 12, cursor: 'pointer',
+          }}>Delete</button>
         </div>
+
+        {/* Delete confirmation */}
+        {confirmDelete && (
+          <div style={{
+            marginBottom: 16, padding: 13, borderRadius: 14,
+            background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.28)',
+          }}>
+            <div style={{ fontWeight: 900, fontSize: 13, color: '#f87171', marginBottom: 4 }}>
+              Delete “{name}” permanently?
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(230,237,247,.6)', fontWeight: 600, marginBottom: 11 }}>
+              {spools.length > 0
+                ? `${spools.length} spool${spools.length !== 1 ? 's' : ''} (${Math.round(totalRemain)}g remaining) will be removed too. `
+                : ''}
+              Past print jobs are kept, but lose their link to this filament. This cannot be undone.
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={async () => { setDeleting(true); try { await onDeleteFilament(); } finally { setDeleting(false); } }}
+                disabled={deleting}
+                style={{
+                  border: '1px solid rgba(239,68,68,.45)', background: 'rgba(239,68,68,.22)',
+                  color: '#fca5a5', padding: '8px 14px', borderRadius: 9,
+                  fontWeight: 800, fontSize: 12.5, cursor: deleting ? 'default' : 'pointer',
+                  opacity: deleting ? 0.5 : 1,
+                }}>{deleting ? 'Deleting…' : 'Yes, delete filament'}</button>
+              <button onClick={() => setConfirmDelete(false)} disabled={deleting} style={{
+                border: '1px solid rgba(255,255,255,.12)', background: 'rgba(255,255,255,.05)',
+                color: '#e6edf7', padding: '8px 14px', borderRadius: 9,
+                fontWeight: 800, fontSize: 12.5, cursor: 'pointer',
+              }}>Cancel</button>
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 16 }}>

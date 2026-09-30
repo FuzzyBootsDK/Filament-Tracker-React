@@ -107,6 +107,26 @@ export default function Settings() {
             </Label>
           </div>
           <div style={{ height: 1, background: 'rgba(255,255,255,.07)', margin: '16px 0' }} />
+          <div className="section-label" style={{ marginBottom: 12 }}>Low stock glow</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
+            <Label text="Enable glow">
+              <select value={appSettings.glow_enabled ?? 'true'} onChange={set('glow_enabled')} className="field-select">
+                <option value="true">Enabled</option>
+                <option value="false">Disabled</option>
+              </select>
+            </Label>
+            <Label text="Orange below (g)">
+              <input value={appSettings.glow_warn_threshold ?? 300} onChange={set('glow_warn_threshold')} type="number" min="0" className="field" />
+            </Label>
+            <Label text="Red below (g)">
+              <input value={appSettings.glow_crit_threshold ?? 100} onChange={set('glow_crit_threshold')} type="number" min="0" className="field" />
+            </Label>
+          </div>
+          <div style={{ marginTop: 10, padding: '10px 13px', borderRadius: 10, background: 'rgba(245,158,11,.08)', border: '1px solid rgba(245,158,11,.2)', fontSize: 12, color: 'rgba(253,230,138,.9)' }}>
+            Inventory cards pulse <strong style={{ color: '#fbbf24' }}>orange</strong> when total remaining filament drops to {appSettings.glow_warn_threshold ?? 300}g or less, and <strong style={{ color: '#f87171' }}>red</strong> at {appSettings.glow_crit_threshold ?? 100}g or less. Set a threshold to 0 to turn off that level.
+          </div>
+
+          <div style={{ height: 1, background: 'rgba(255,255,255,.07)', margin: '16px 0' }} />
           <div className="section-label" style={{ marginBottom: 12 }}>MQTT Relay Broker</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <Label text="Enable relay broker">

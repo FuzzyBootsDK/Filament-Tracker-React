@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { filaments as filamentsApi, brands as brandsApi } from '../api/client.js';
 
-const MATERIALS = ['PLA', 'PETG', 'ABS', 'ASA', 'TPU', 'PLA+', 'PA', 'PC', 'FLEX'];
+const MATERIALS = ['PLA', 'PETG', 'ABS', 'ASA', 'TPU', 'PLA+', 'PLA Pure', 'PA', 'PC', 'FLEX'];
 const FINISHES = ['Basic', 'Matte', 'Silk', 'Galaxy', 'Glossy', 'HF', 'Clear', 'Wood', 'Metal'];
 const SPOOL_TYPES = [
   { id: 'non-reusable', label: 'Non-reusable' },

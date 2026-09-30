@@ -152,6 +152,9 @@ function seedDefaults() {
     ['relay_port', '1883'],
     ['hourly_rate', '250'],
     ['vat_rate', '25'],
+    ['glow_enabled', 'true'],
+    ['glow_warn_threshold', '300'],
+    ['glow_crit_threshold', '100'],
   ];
   for (const [key, value] of defaults) insertSetting.run(key, value);
 

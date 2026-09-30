@@ -1,5 +1,5 @@
 # ── Stage 1: build React frontend ──────────────────────────────────────────────
-FROM node:20-alpine AS build-frontend
+FROM node:24-alpine AS build-frontend
 WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm ci
@@ -7,8 +7,10 @@ COPY frontend/ ./
 RUN npm run build
 
 # ── Stage 2: production image ───────────────────────────────────────────────────
-FROM node:20-alpine AS production
-WORKDIR /app
+FROM node:24-alpine AS production
+# Keep the backend nested one level down: src/index.js resolves the frontend
+# as join(__dirname, "../../public"), i.e. /app/public.
+WORKDIR /app/backend
 
 # Install backend deps
 COPY backend/package*.json ./
@@ -18,7 +20,7 @@ RUN npm ci --omit=dev
 COPY backend/ ./
 
 # Copy built frontend into /app/public (served by Express)
-COPY --from=build-frontend /frontend/dist ./public
+COPY --from=build-frontend /frontend/dist /app/public
 
 # Data directory (SQLite DB)
 RUN mkdir -p /app/data

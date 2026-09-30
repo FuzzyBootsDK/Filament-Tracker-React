@@ -183,3 +183,23 @@ a:hover { color: #bfdbfe; }
 .progress-bar.low {
   background: linear-gradient(90deg,rgba(245,158,11,.98),rgba(239,68,68,.95));
 }
+
+/* Low-stock glow on inventory cards */
+@keyframes lowStockGlowWarn {
+  0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,.28), 0 0 0 1px rgba(245,158,11,.30), 0 0 8px 0 rgba(245,158,11,.20); }
+  50%      { box-shadow: 0 8px 24px rgba(0,0,0,.28), 0 0 0 2px rgba(245,158,11,.70), 0 0 26px 4px rgba(245,158,11,.55); }
+}
+
+@keyframes lowStockGlowCrit {
+  0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,.28), 0 0 0 1px rgba(239,68,68,.32), 0 0 8px 0 rgba(239,68,68,.22); }
+  50%      { box-shadow: 0 8px 24px rgba(0,0,0,.28), 0 0 0 2px rgba(239,68,68,.75), 0 0 30px 5px rgba(239,68,68,.60); }
+}
+
+.glow-warn { animation: lowStockGlowWarn 2.8s ease-in-out infinite; }
+.glow-crit { animation: lowStockGlowCrit 2.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-warn, .glow-crit { animation: none; }
+  .glow-warn { box-shadow: 0 8px 24px rgba(0,0,0,.28), 0 0 0 2px rgba(245,158,11,.60), 0 0 20px 3px rgba(245,158,11,.40); }
+  .glow-crit { box-shadow: 0 8px 24px rgba(0,0,0,.28), 0 0 0 2px rgba(239,68,68,.65), 0 0 22px 4px rgba(239,68,68,.45); }
+}

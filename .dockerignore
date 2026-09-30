@@ -1,0 +1,27 @@
+# Host node_modules must never be copied in — they clobber the image's own
+# `npm ci` output and their .bin shims are not valid inside the Linux container.
+node_modules/
+**/node_modules/
+
+# Build output (rebuilt inside the image)
+dist/
+**/dist/
+
+# Local data / secrets
+data/
+.env
+.env.local
+*.db
+*.db-wal
+*.db-shm
+
+# VCS and tooling
+.git/
+.gitignore
+.claude/
+
+# Unrelated bulk in the project root
+Repository optimization project/
+Repository optimization project.zip
+*.csv
+README.md
