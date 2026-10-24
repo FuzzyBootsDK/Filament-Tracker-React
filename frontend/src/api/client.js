@@ -31,6 +31,7 @@ export const auth = {
   login: (u, p) => api.post('/auth/login', { username: u, password: p }),
   logout: () => api.post('/auth/logout', {}),
   me: () => api.get('/auth/me'),
+  config: () => api.get('/auth/config'),
   setup: (u, p) => api.post('/auth/setup', { username: u, password: p }),
   users: () => api.get('/auth/users'),
   createUser: (d) => api.post('/auth/users', d),

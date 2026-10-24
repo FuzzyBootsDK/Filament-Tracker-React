@@ -68,7 +68,7 @@ function NavItem({ item, active }) {
 
 export default function Sidebar() {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, authDisabled, logout } = useAuth();
   const { printerStatus } = usePrinter();
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -132,7 +132,8 @@ export default function Sidebar() {
           Help
         </div>
 
-        {/* Logout */}
+        {/* Logout — pointless when the server runs without login */}
+        {!authDisabled && (
         <div
           onClick={logout}
           style={{
@@ -154,6 +155,7 @@ export default function Sidebar() {
           </span>
           {user?.username}
         </div>
+        )}
       </div>
 
       {helpOpen && <HelpModal onClose={() => setHelpOpen(false)} />}

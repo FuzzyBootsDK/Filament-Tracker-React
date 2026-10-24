@@ -12,7 +12,10 @@ services:
       NODE_ENV: production
       PORT: "3001"
       DATA_DIR: /app/data
-      JWT_SECRET: "${JWT_SECRET:?set JWT_SECRET in .env}"
+      # No login required — every request runs as a built-in local admin.
+      # Set to "false" (and set JWT_SECRET in .env) to require login again.
+      AUTH_DISABLED: "${AUTH_DISABLED:-true}"
+      JWT_SECRET: "${JWT_SECRET:-}"
       CORS_ORIGIN: "http://localhost:8001"
     # Bridge networking (host networking is not supported on Docker Desktop for
     # Windows). Outbound connections to Bambu printers on the LAN work fine;

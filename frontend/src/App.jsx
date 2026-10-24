@@ -29,10 +29,16 @@ function RequireAuth({ children }) {
   return children;
 }
 
+function LoginRoute() {
+  const { authDisabled } = useAuth();
+  if (authDisabled) return <Navigate to="/" replace />;
+  return <Login />;
+}
+
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<LoginRoute />} />
       <Route path="/*" element={
         <RequireAuth>
           <PrinterProvider>

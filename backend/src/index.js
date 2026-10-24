@@ -21,6 +21,7 @@ import amsRoutes from './routes/ams.js';
 import printJobsRoutes from './routes/printJobs.js';
 import settingsRoutes from './routes/settings.js';
 import publicRoutes from './routes/public.js';
+import { AUTH_DISABLED } from './middleware/auth.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -78,4 +79,11 @@ startMqttService();
 
 server.listen(PORT, () => {
   console.log(`Filament Tracker backend on http://0.0.0.0:${PORT}`);
+  if (AUTH_DISABLED) {
+    console.log('AUTH_DISABLED=true — no login required. Anyone who can reach this port');
+    console.log('has full access, including stored printer access codes. Trusted LAN only.');
+  } else if (!process.env.JWT_SECRET) {
+    console.warn('WARNING: login is enabled but JWT_SECRET is not set — using the built-in');
+    console.warn('fallback secret, which anyone can read from the source. Set JWT_SECRET.');
+  }
 });

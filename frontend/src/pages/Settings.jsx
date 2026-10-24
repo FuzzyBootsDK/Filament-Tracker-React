@@ -5,7 +5,7 @@ import { usePrinter } from '../context/PrinterContext.jsx';
 import Modal from '../components/Modal.jsx';
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, authDisabled } = useAuth();
   const { mqttLog, clearMqttLog } = usePrinter();
   const [appSettings, setAppSettings] = useState({});
   const [brandList, setBrandList] = useState([]);
@@ -188,7 +188,7 @@ export default function Settings() {
       </div>
 
       {/* User management (admin only) */}
-      {user?.is_admin === 1 && (
+      {user?.is_admin === 1 && !authDisabled && (
         <div className="card">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
             <span className="section-label">Users</span>

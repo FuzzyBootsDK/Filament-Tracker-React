@@ -1,9 +1,15 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { getDb, rowId } from '../db/index.js';
-import { requireAuth, requireAdmin, signToken } from '../middleware/auth.js';
+import { requireAuth, requireAdmin, signToken, AUTH_DISABLED, LOCAL_USER } from '../middleware/auth.js';
 
 const router = Router();
+
+// Lets the frontend know whether to show the login page, the logout button and
+// the user-management UI at all.
+router.get('/config', (req, res) => {
+  res.json({ auth_disabled: AUTH_DISABLED });
+});
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -26,6 +32,7 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/me', requireAuth, (req, res) => {
+  if (AUTH_DISABLED) return res.json(LOCAL_USER);
   const db = getDb();
   const user = db.prepare('SELECT id, username, is_admin FROM users WHERE id = ?').get(req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
