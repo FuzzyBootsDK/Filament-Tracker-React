@@ -7,3 +7,6 @@ dist/
 .DS_Store
 .env
 .env.local
+
+# Local Claude Code settings, not part of the project.
+.claude/
