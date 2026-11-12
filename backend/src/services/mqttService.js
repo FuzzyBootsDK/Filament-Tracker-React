@@ -158,9 +158,48 @@ function trackPrintJob(printer, p) {
   }
 }
 
+// activePrints lives only in memory, so a restart used to lose the link to the
+// job row of a print that is still going. The printer then reported RUNNING with
+// no active entry, which opened a *second* row and left the first stuck on
+// 'running' forever. Reload them on boot instead, so a mid-print restart resumes
+// tracking rather than double-logging.
+function resumeActivePrints() {
+  const db = getDb();
+  const rows = db.prepare(`
+    SELECT j.id AS job_id, j.started_at, p.serial_number AS serial
+    FROM print_jobs j
+    JOIN printers p ON p.id = j.printer_id
+    WHERE j.status = 'running'
+    ORDER BY j.started_at ASC, j.id ASC
+  `).all();
+
+  // Newest row per printer wins; anything older is an orphan from a previous
+  // restart that can never be closed properly, so retire it rather than leave
+  // it reported as running forever.
+  const newest = new Map();
+  const stale = [];
+  for (const row of rows) {
+    if (!row.serial) continue;
+    const prev = newest.get(row.serial);
+    if (prev) stale.push(prev);
+    newest.set(row.serial, row);
+  }
+
+  for (const row of stale) {
+    db.prepare("UPDATE print_jobs SET status = 'cancelled' WHERE id = ?").run(row.job_id);
+    console.log(`Retired orphaned print job #${row.job_id} (started ${row.started_at})`);
+  }
+
+  for (const [serial, row] of newest) {
+    activePrints.set(serial, { jobId: row.job_id });
+    console.log(`Resumed tracking print job #${row.job_id} on ${serial}`);
+  }
+}
+
 export function startMqttService() {
   try {
     const db = getDb();
+    resumeActivePrints();
     const printers = db.prepare('SELECT * FROM printers WHERE is_active = 1').all();
     for (const printer of printers) {
       connectPrinter(printer);
