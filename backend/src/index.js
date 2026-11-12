@@ -21,6 +21,7 @@ import amsRoutes from './routes/ams.js';
 import printJobsRoutes from './routes/printJobs.js';
 import settingsRoutes from './routes/settings.js';
 import publicRoutes from './routes/public.js';
+import publicStatusRoutes from './routes/publicStatus.js';
 import { AUTH_DISABLED } from './middleware/auth.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -66,8 +67,15 @@ wss.on('connection', (ws) => {
   });
 });
 
-// Public webstore API: mounted before the credentialed CORS layer below so it
-// can serve Access-Control-Allow-Origin: * without a conflicting credentials header.
+// Both mounted before the credentialed CORS layer below so they can serve
+// Access-Control-Allow-Origin: * without a conflicting credentials header.
+//
+// They are kept on separate prefixes so a reverse proxy can expose one without
+// the other. /api/live is the print progress behind the public /live page;
+// /api/public is the webstore colour/stock API, which the webshop reaches
+// container-to-container over the proxy network and which should NOT be
+// published to the internet alongside the status page.
+app.use('/api/live', publicStatusRoutes);
 app.use('/api/public', publicRoutes);
 
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
@@ -86,7 +94,7 @@ app.use('/api/print-jobs', printJobsRoutes);
 app.use('/api/settings', settingsRoutes);
 
 // Standalone public print-status page. Self-contained HTML with no tracker code
-// in it — expose only this path and /api/public/* through a reverse proxy and
+// in it — expose only this path and /api/live/* through a reverse proxy and
 // nothing else in the app is reachable.
 const LIVE_PAGE = join(__dirname, '../public-live/live.html');
 app.get(['/live', '/live/'], (req, res) => {
