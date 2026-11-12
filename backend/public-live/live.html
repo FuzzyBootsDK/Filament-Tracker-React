@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Print Status</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --card-border: rgba(255,255,255,.09);
+    --text: #e6edf7;
+    --muted: rgba(230,237,247,.5);
+    --faint: rgba(230,237,247,.3);
+    --ok: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 48px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+
+  header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+  h1 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -.01em; }
+  .conn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; font-weight: 800; color: var(--muted);
+    margin-left: auto;
+  }
+  .conn .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+  .conn.stale .dot { background: var(--warn); }
+  .conn.down .dot { background: var(--bad); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+
+  .card {
+    border: 1px solid var(--card-border);
+    background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  }
+  .card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .name { font-weight: 900; font-size: 16px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pill {
+    font-size: 10px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .s-printing  { color: #818cf8; background: rgba(99,102,241,.15);  border: 1px solid rgba(99,102,241,.3); }
+  .s-paused    { color: #fbbf24; background: rgba(245,158,11,.15);  border: 1px solid rgba(245,158,11,.3); }
+  .s-finished  { color: #34d399; background: rgba(16,185,129,.15);  border: 1px solid rgba(16,185,129,.3); }
+  .s-failed    { color: #f87171; background: rgba(239,68,68,.15);   border: 1px solid rgba(239,68,68,.3); }
+  .s-preparing { color: #2dd4bf; background: rgba(20,184,166,.15);  border: 1px solid rgba(20,184,166,.3); }
+  .s-idle      { color: #94a3b8; background: rgba(100,116,139,.15); border: 1px solid rgba(100,116,139,.3); }
+  .s-offline   { color: #64748b; background: rgba(100,116,139,.1);  border: 1px solid rgba(100,116,139,.2); }
+
+  .pct-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px; }
+  .pct { font-size: 32px; font-weight: 900; letter-spacing: -.02em; line-height: 1; }
+  .eta { font-size: 12.5px; font-weight: 800; color: var(--muted); }
+
+  .track { height: 9px; border-radius: 999px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .bar {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .bar.paused { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+  .meta { margin-top: 13px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    font-size: 11.5px; font-weight: 800; color: var(--muted);
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+    padding: 5px 10px; border-radius: 999px;
+  }
+  .chip b { color: var(--text); font-weight: 900; }
+
+  .quiet { color: var(--faint); font-size: 13px; font-weight: 700; padding: 10px 0 2px; }
+
+  .empty {
+    text-align: center; color: var(--faint); font-size: 14px; font-weight: 700;
+    padding: 70px 16px; border: 1px dashed var(--card-border); border-radius: 18px;
+  }
+
+  footer { margin-top: 26px; text-align: center; color: var(--faint); font-size: 11.5px; font-weight: 700; }
+
+  @media (prefers-reduced-motion: reduce) { .bar { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Print Status</h1>
+    <span class="conn" id="conn"><span class="dot"></span><span id="conn-text">connecting…</span></span>
+  </header>
+  <div id="root"><div class="empty">Loading…</div></div>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+(function () {
+  var POLL_MS = 5000;
+  var root = document.getElementById('root');
+  var conn = document.getElementById('conn');
+  var connText = document.getElementById('conn-text');
+  var foot = document.getElementById('foot');
+  var fails = 0;
+
+  var LABEL = {
+    printing: 'Printing', paused: 'Paused', finished: 'Done', failed: 'Failed',
+    preparing: 'Preparing', idle: 'Idle', offline: 'Offline'
+  };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function eta(mins) {
+    if (mins === null || mins === undefined || mins < 0) return null;
+    if (mins < 60) return mins + ' min left';
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return h + 'h ' + (m < 10 ? '0' : '') + m + 'm left';
+  }
+
+  function card(p) {
+    var st = LABEL[p.state] || 'Idle';
+    var active = p.state === 'printing' || p.state === 'paused';
+    var pct = typeof p.percent === 'number' ? p.percent : null;
+    var html = '';
+
+    html += '<div class="card">';
+    html += '<div class="card-top">';
+    html += '<span class="name">' + esc(p.name) + '</span>';
+    html += '<span class="pill s-' + esc(p.state) + '"><span class="dot"></span>' + esc(st) + '</span>';
+    html += '</div>';
+
+    if (active && pct !== null) {
+      var e = eta(p.remaining_min);
+      html += '<div class="pct-row"><span class="pct">' + pct + '%</span>';
+      html += '<span class="eta">' + (e ? esc(e) : '') + '</span></div>';
+      html += '<div class="track"><div class="bar' + (p.state === 'paused' ? ' paused' : '') +
+              '" style="width:' + Math.max(0, Math.min(100, pct)) + '%"></div></div>';
+    } else {
+      html += '<div class="quiet">' + (p.state === 'offline' ? 'Not reachable' : 'No print running') + '</div>';
+    }
+
+    var chips = '';
+    if (active && p.layer !== null && p.total_layers) {
+      chips += '<span class="chip">Layer <b>' + p.layer + '</b> / ' + p.total_layers + '</span>';
+    }
+    if (p.nozzle_temp !== null) chips += '<span class="chip">Nozzle <b>' + p.nozzle_temp + '&deg;C</b></span>';
+    if (p.bed_temp !== null) chips += '<span class="chip">Bed <b>' + p.bed_temp + '&deg;C</b></span>';
+    if (chips) html += '<div class="meta">' + chips + '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  function setConn(cls, text) {
+    conn.className = 'conn' + (cls ? ' ' + cls : '');
+    connText.textContent = text;
+  }
+
+  function render(data) {
+    var printers = data.printers || [];
+    if (!printers.length) {
+      root.innerHTML = '<div class="empty">No printers configured.</div>';
+    } else {
+      root.innerHTML = '<div class="grid">' + printers.map(card).join('') + '</div>';
+    }
+    foot.textContent = 'Updated ' + new Date().toLocaleTimeString();
+  }
+
+  function tick() {
+    fetch('/api/public/print-status', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        fails = 0;
+        setConn('', 'live');
+        render(data);
+      })
+      .catch(function () {
+        fails++;
+        if (fails === 1) setConn('stale', 'reconnecting…');
+        else setConn('down', 'offline');
+        if (fails > 1 && !root.querySelector('.grid')) {
+          root.innerHTML = '<div class="empty">Can’t reach the printer service.</div>';
+        }
+      });
+  }
+
+  tick();
+  setInterval(tick, POLL_MS);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) tick();
+  });
+})();
+</script>
+</body>
+</html>
