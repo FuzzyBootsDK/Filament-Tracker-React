@@ -30,7 +30,12 @@ const PUBLIC_STATES = {
 
 function publicState(live) {
   if (!live?.connected) return 'offline';
-  return PUBLIC_STATES[String(live.gcode_state || '').toUpperCase()] || 'idle';
+  const raw = String(live.gcode_state || '').toUpperCase();
+  // Connected, but no full report has arrived yet, so we genuinely do not know
+  // what it is doing. Saying "idle" here would claim an active print is not
+  // running; "connecting" is the honest answer until the printer tells us.
+  if (!raw) return 'connecting';
+  return PUBLIC_STATES[raw] || 'idle';
 }
 
 function round1(n) {

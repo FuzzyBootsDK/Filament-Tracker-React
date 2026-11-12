@@ -42,6 +42,14 @@ export function connectPrinter(printer) {
   client.on('connect', () => {
     console.log(`MQTT connected: ${printer.name} (${printer.serial_number})`);
     client.subscribe(topic);
+    // Ask for a full report immediately. The printer only pushes a complete one
+    // every few minutes; in between it sends partial updates. Without this, a
+    // restart mid-print leaves us with temperatures but no gcode_state for
+    // minutes, and the public page reports an active print as not running.
+    client.publish(
+      `device/${printer.serial_number}/request`,
+      JSON.stringify({ pushing: { sequence_id: '0', command: 'pushall' } })
+    );
     updateStatus(printer, { connected: true });
   });
 

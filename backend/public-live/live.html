@@ -63,6 +63,7 @@
   .s-preparing { color: #2dd4bf; background: rgba(20,184,166,.15);  border: 1px solid rgba(20,184,166,.3); }
   .s-idle      { color: #94a3b8; background: rgba(100,116,139,.15); border: 1px solid rgba(100,116,139,.3); }
   .s-offline   { color: #64748b; background: rgba(100,116,139,.1);  border: 1px solid rgba(100,116,139,.2); }
+  .s-connecting{ color: #94a3b8; background: rgba(148,163,184,.12); border: 1px solid rgba(148,163,184,.26); }
 
   .pct-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px; }
   .pct { font-size: 32px; font-weight: 900; letter-spacing: -.02em; line-height: 1; }
@@ -117,7 +118,8 @@
 
   var LABEL = {
     printing: 'Printing', paused: 'Paused', finished: 'Done', failed: 'Failed',
-    preparing: 'Preparing', idle: 'Idle', offline: 'Offline'
+    preparing: 'Preparing', idle: 'Idle', offline: 'Offline',
+    connecting: 'Connecting'
   };
 
   function esc(s) {
@@ -152,7 +154,10 @@
       html += '<div class="track"><div class="bar' + (p.state === 'paused' ? ' paused' : '') +
               '" style="width:' + Math.max(0, Math.min(100, pct)) + '%"></div></div>';
     } else {
-      html += '<div class="quiet">' + (p.state === 'offline' ? 'Not reachable' : 'No print running') + '</div>';
+      var quiet = p.state === 'offline' ? 'Not reachable'
+                : p.state === 'connecting' ? 'Waiting for printer…'
+                : 'No print running';
+      html += '<div class="quiet">' + quiet + '</div>';
     }
 
     var chips = '';
