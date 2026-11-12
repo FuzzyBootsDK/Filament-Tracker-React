@@ -99,9 +99,14 @@ const PUBLIC = join(__dirname, '../../public');
 if (process.env.NODE_ENV === 'production' && existsSync(PUBLIC)) {
   app.use(express.static(PUBLIC));
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api') && !req.path.startsWith('/ws')) {
-      res.sendFile(join(PUBLIC, 'index.html'));
+    // An unmatched /api or /ws path must not fall through to the SPA shell —
+    // but it must still get a response. Returning nothing here left the request
+    // hanging until the client gave up, which is a cheap way to tie up
+    // connections now that part of /api is publicly reachable.
+    if (req.path.startsWith('/api') || req.path.startsWith('/ws')) {
+      return res.status(404).json({ error: 'Not found' });
     }
+    res.sendFile(join(PUBLIC, 'index.html'));
   });
 }
 
